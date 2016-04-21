@@ -1,0 +1,43 @@
+//
+//! \file  Config.hpp
+//  
+//
+//  Created by Kazuma Ishio on 2014/12/19.
+//  Modified by Daisuke Nakajima
+//
+
+#ifndef _Config_hpp
+#define _Config_hpp
+
+/*--- Size and structure of event data ---*/
+#define READDEPTH 30`
+#define EVENTSIZE (READDEPTH*2 + 3)*16
+/*FakeFEB sends data begins with header 2 bytes and followed by ipaddress 4 bytes */
+#define HEADERLEN 2   //for FakeFEB only
+#define IPADDRLEN 4   //for FakeFEB only
+/*Data from Both has evNo,trigNo, and clk(FakeFEB doesn't) in last 16 bytes*/
+#define EVTNOLEN  4
+#define TRGNOLEN  4
+#define CLKLEN    8
+#define POSEVTNO  0//(READDEPTH*2 + 1)*16
+#define POSTRGNO  EVTNOLEN//(READDEPTH*2 + 1)*16 + EVTNOLEN
+#define POSCLK    EVTNOLEN + TRGNOLEN//(READDEPTH*2 + 1)*16 + EVTNOLEN + TRGNOLEN
+
+
+#define MAX_CONNECTION 48
+#define MAX_RINGBUF 49
+
+//error exit threshold 
+#define ERR_NDROPPED 100000
+
+//interval to measure throughput
+#define THRUPUTMES_STARTSEC 1
+#define THRUPUTMES_INTERVALSEC 0
+#define THRUPUTMES_INTERVALNSEC 1000000 
+//1000000 for 1msec
+#define MAX_NWMES 10000
+
+//outputfile by DAQtimer
+#define MESFILE "LSTDAQmeasure.dat"
+#define ERRMESFILE "LSTDAQerrmeasure.dat"
+#endif

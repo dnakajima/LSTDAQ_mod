@@ -1,0 +1,365 @@
+\hypertarget{_master_8cpp}{}\section{Master.\+cpp File Reference}
+\label{_master_8cpp}\index{Master.\+cpp@{Master.\+cpp}}
+
+
+This file contains main function.  
+
+
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$unistd.\+h$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$sstream$>$}\\*
+{\ttfamily \#include $<$iomanip$>$}\\*
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+{\ttfamily \#include $<$pthread.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}Ring\+Buffer.\+hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}T\+C\+P\+Client\+Socket.\+hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}D\+A\+Qtimer.\+hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}Config.\+hpp\char`\"{}}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$sys/timerfd.\+h$>$}\\*
+{\ttfamily \#include $<$assert.\+h$>$}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{_master_8cpp_a0662c9c05b645484787c418b871abfc5}{D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T}~100000
+\begin{DoxyCompactList}\small\item\em The number of events to acquire when N\+O\+T specified by user. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{_master_8cpp_a0173e926c090810e7a7f5cd30356192c}{inverse\+Byte\+Order} (char $\ast$buf, int bufsize)
+\begin{DoxyCompactList}\small\item\em Flips the byte order of given array. \end{DoxyCompactList}\item 
+void \hyperlink{_master_8cpp_aa7b0d9ec5f71e9be9d0520a7f862a486}{usage} (char $\ast$argv)
+\item 
+void \hyperlink{_master_8cpp_afdfe90600cb22da97e4a38a3a7245c0d}{s\+R\+Binit} ()
+\item 
+void \hyperlink{_master_8cpp_a2bc96e14aff905cfba14c80aa9fc6bc1}{s\+R\+Bcreate} (int n\+Serv)
+\item 
+void \hyperlink{_master_8cpp_add67bfd9f7cbc6a394d0d61a41e57ec5}{s\+R\+Bsetaddr} (int s\+R\+Bid, unsigned short sh\+Cid, char $\ast$sz\+Addr, unsigned short sh\+Port)
+\item 
+int \hyperlink{_master_8cpp_a5cb25131ecbe5f55819aa31d331c833a}{get\+Max\+Cid} ()
+\item 
+void \hyperlink{_master_8cpp_a6d162cd44c490ccae81ac5d22f7db74a}{s\+R\+Bdelete} (int n\+Serv)
+\item 
+void $\ast$ \hyperlink{_master_8cpp_a9138383c988375a04ce17786819665e5}{Thru\+Put\+Mes\+\_\+thread} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em Thru\+Put\+Mes thread. \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{_master_8cpp_a568c34b708bcc89579bda6142733110a}{Collector\+\_\+thread} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em Collector\+\_\+thread Collects data from F\+E\+Bs by T\+C\+P/\+I\+P connection and stores it to Ring\+Buffer. \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{_master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{Builder\+\_\+thread} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em Builder\+\_\+thread Performs event building in which data is collected from all Ring\+Buffers by event wise and is combined. \end{DoxyCompactList}\item 
+int \hyperlink{_master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, char $\ast$$\ast$argv)
+\begin{DoxyCompactList}\small\item\em main \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{_master_8cpp_a44ff404ab6caa6e80830e799d22120a0}{infreq}
+\item 
+unsigned long \hyperlink{_master_8cpp_a80ca370ae9c3da6cf6d5e75206dfb76d}{Ndaq}
+\item 
+bool \hyperlink{_master_8cpp_a6e4fa43841449af20dd3798e7de87d2f}{datacreate}
+\item 
+pthread\+\_\+mutex\+\_\+t \hyperlink{_master_8cpp_a898fdbfa9c296c6a8e343c764f11acba}{mutex\+\_\+init\+Lock} =P\+T\+H\+R\+E\+A\+D\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+E\+R
+\item 
+pthread\+\_\+cond\+\_\+t \hyperlink{_master_8cpp_ae415d43f6dfaf58e6bca992b143ac004}{cond\+\_\+allend} =P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+E\+R
+\item 
+int \hyperlink{_master_8cpp_a4ae5c06802ed8788fbd5a7d55d9c5b85}{init\+End}
+\item 
+int \hyperlink{_master_8cpp_a601520f53e2d3d67744513d176ccf90a}{Ncpu}
+\item 
+\hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} \hyperlink{_master_8cpp_aa65708d975d0c62e4d1edb504fa5ba2b}{s\+R\+B} \mbox{[}\hyperlink{_config_8hpp_a17300200b36fc0300d37054428db318b}{M\+A\+X\+\_\+\+R\+I\+N\+G\+B\+U\+F}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file contains main function. 
+
+main function reads configuration file and creates the threads. 
+\begin{DoxyParams}{Parameters}
+{\em Ndaq} & will be aaa \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{_master_8cpp_a0662c9c05b645484787c418b871abfc5}{}\index{Master.\+cpp@{Master.\+cpp}!D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T@{D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T}}
+\index{D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T@{D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T~100000}\label{_master_8cpp_a0662c9c05b645484787c418b871abfc5}
+
+
+The number of events to acquire when N\+O\+T specified by user. 
+
+Ndaq is set to this value as default value. And if specified -\/ 
+
+\subsection{Function Documentation}
+\hypertarget{_master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{}\index{Master.\+cpp@{Master.\+cpp}!Builder\+\_\+thread@{Builder\+\_\+thread}}
+\index{Builder\+\_\+thread@{Builder\+\_\+thread}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{Builder\+\_\+thread(void $\ast$arg)}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Builder\+\_\+thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a435b26afa480ba18cbef3620d0eccee2}
+
+
+Builder\+\_\+thread Performs event building in which data is collected from all Ring\+Buffers by event wise and is combined. 
+
+\hypertarget{_master_8cpp_BLD_PROC}{}\subsection{The procedures}\label{_master_8cpp_BLD_PROC}
+
+\begin{DoxyEnumerate}
+\item Make lists of Ring Buffers.
+\item sets C\+P\+U.
+\item Output File Creation
+\item Synchronizes with all threads before starting D\+A\+Q.
+\item Read Data From Ring\+Buffer with event building
+\item Goes out the loop.
+\item Writes summary report of D\+A\+Q.
+\item Thread ends.
+\end{DoxyEnumerate}\hypertarget{_master_8cpp_BLD_RBLIST}{}\subsubsection{Make lists of Ring Buffers.}\label{_master_8cpp_BLD_RBLIST}
+Arg is interpreted as the first \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} struct. Using \hyperlink{structs_ring_buffer_a3685b679b0732b84bbccb1f467638ea9}{s\+Ring\+Buffer.\+next}, all s\+Ring\+Buffers which will be used are collected.\hypertarget{_master_8cpp_BLD_SETCPU}{}\subsubsection{Sets C\+P\+U}\label{_master_8cpp_BLD_SETCPU}
+Sets C\+P\+U. See \hyperlink{index_CPU_ID}{C\+P\+U I\+D specification} .\hypertarget{_master_8cpp_BLD_SEARCHRB}{}\subsubsection{Search the charged s\+Ring\+Buffer structs}\label{_master_8cpp_BLD_SEARCHRB}
+Searches all the structs for connections for which this thread is assigned.\hypertarget{_master_8cpp_BLD_OUTFILE_OPEN}{}\subsubsection{Output File Creation}\label{_master_8cpp_BLD_OUTFILE_OPEN}
+Prepares the outputfile.\hypertarget{_master_8cpp_BLD_STARTSYNC}{}\subsubsection{Synchronizes threads before starting D\+A\+Q.}\label{_master_8cpp_BLD_STARTSYNC}
+Waits for the other threads to be prepared as well. See \hyperlink{index_START_SYNC}{Start synchronization}. Just after this step, \hyperlink{class_l_s_t_d_a_q_1_1_d_a_qtimer}{L\+S\+T\+D\+A\+Q\+::\+D\+A\+Qtimer} object is created to measure D\+A\+Q performance.\hypertarget{_master_8cpp_BLD_READ_DATA}{}\subsubsection{Read Data From Ring\+Buffer with build}\label{_master_8cpp_BLD_READ_DATA}
+The loop procedue of reading data and performing event building.
+\begin{DoxyItemize}
+\item reading data~\newline
+ Data from all the F\+E\+Bs are collected by reading data stored in all Ring\+Buffers. This procedure is performed by \hyperlink{class_l_s_t_d_a_q_1_1_ring_buffer_a589fb1045d27590cca235e01f313d1e8}{L\+S\+T\+D\+A\+Q\+::\+Ring\+Buffer\+::read()} function, which reads data from each Ring\+Buffer by event wise.
+\item event building~\newline
+ The data from all Ring\+Buffer is combined to one data array as one event data for whole camera. The data to be combined must have the result of identical trigger. This process makes sure the trigger is identical, investigating if trigger number is the same. Trigger number is extracted from data and are checked. If it is not the same number, data in incomplete set will be discarded.
+\end{DoxyItemize}
+
+N\+O\+T\+E\+: Currently, the procedure of judging trigger is adjusted to D\+A\+Q sequence of L\+S\+T. But it may change. A change of trigger sequence may require modification of event building procedure. At this moment, the trigger number check procedure takes into account the discrepancy of trigger number following the readout sequence of F\+E\+B as below.
+
+
+\begin{DoxyEnumerate}
+\item There are two kinds of numbers, trigger number and event number, which are counted up in a F\+E\+B. Trigger number counts up when a trigger is accepted. And Event number counts up when data is extracted. Event number cannot be larger than trigger number, because of this order of counting up.
+\item There is a case that F\+E\+B accepts trigger but fails to extract data because D\+R\+S4 is busy.~\newline
+ This case can happen when the time from previous trigger hasn\textquotesingle{}t passed enough long and is still within the dead time. As a result, until the dead time ends the next data cannot be extracted and trigger number will keep counting up. Therefore the data from the F\+E\+B will show skip of trigger number. When event building, this can be seen as larger number than ones from other F\+E\+Bs.
+\begin{DoxyEnumerate}
+\item There can be a case that a F\+E\+B drops a trigger.~\newline
+ The event building will result in trouble because all the subsequent data from corresponding F\+E\+B will have shifted trigger number. To avoid this incident, artificial dead time is set in T\+I\+B(\+Trigger Interface Board) which distributes trigger signal to F\+E\+B. And additionally, a set of time stamps, 1\+P\+P\+S(1 pulse per second) and 10 M\+Hz signal will be embedded in data to confirm that the time F\+E\+B accepted the trigger is the same. The check sequence is not implemented now.
+\end{DoxyEnumerate}
+\end{DoxyEnumerate}\hypertarget{_master_8cpp_BLD_SUBMITSUMMARY}{}\subsubsection{Submit summary of D\+A\+Q}\label{_master_8cpp_BLD_SUBMITSUMMARY}
+Tell \hyperlink{class_l_s_t_d_a_q_1_1_d_a_qtimer}{L\+S\+T\+D\+A\+Q\+::\+D\+A\+Qtimer} object to make summary of D\+A\+Q measurement.\hypertarget{_master_8cpp_BLD_RB_DATAUNLOAD}{}\subsubsection{Unload remaining data from Ring\+Buffer}\label{_master_8cpp_BLD_RB_DATAUNLOAD}
+Continue \hyperlink{class_l_s_t_d_a_q_1_1_ring_buffer_a589fb1045d27590cca235e01f313d1e8}{L\+S\+T\+D\+A\+Q\+::\+Ring\+Buffer\+::read()} until all the data in Ring\+Buffer is regarded as read.\hypertarget{_master_8cpp_COLL_THREADEND}{}\subsubsection{Thread ends.}\label{_master_8cpp_COLL_THREADEND}
+\hypertarget{_master_8cpp_a568c34b708bcc89579bda6142733110a}{}\index{Master.\+cpp@{Master.\+cpp}!Collector\+\_\+thread@{Collector\+\_\+thread}}
+\index{Collector\+\_\+thread@{Collector\+\_\+thread}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{Collector\+\_\+thread(void $\ast$arg)}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Collector\+\_\+thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a568c34b708bcc89579bda6142733110a}
+
+
+Collector\+\_\+thread Collects data from F\+E\+Bs by T\+C\+P/\+I\+P connection and stores it to Ring\+Buffer. 
+
+\hypertarget{_master_8cpp_COLL_PROC}{}\subsection{Procedures}\label{_master_8cpp_COLL_PROC}
+
+\begin{DoxyEnumerate}
+\item Sets the first charged \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} .
+\item Sets C\+P\+U.
+\item Searches the charged \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} structs
+\item Establishes T\+C\+P/\+I\+P connections with F\+E\+Bs.
+\item Synchronizes with all threads before starting D\+A\+Q.
+\item Reads data from socket~\newline
+ and writes it to Ring\+Buffer.
+\item Goes out the loop.
+\item Thread ends.
+\end{DoxyEnumerate}\hypertarget{_master_8cpp_COLL_SETFIRST}{}\subsubsection{Sets the first charged s\+Ring\+Buffer .}\label{_master_8cpp_COLL_SETFIRST}
+This function receives reference to an \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} struct as void$\ast$ type, and casts it as \char`\"{}s\+Ring\+Buffer\char`\"{} struct. ~\newline
+ From Cid in it, this thread knows its Collector I\+D. This struct is the first one among which this thread is charged for. All the struct to take charge is to be searched in \hyperlink{_master_8cpp_COLL_SEARCHRB}{Search the charged s\+Ring\+Buffer structs} .\hypertarget{_master_8cpp_COLL_SETCPU}{}\subsubsection{Sets C\+P\+U}\label{_master_8cpp_COLL_SETCPU}
+Sets C\+P\+U. See \hyperlink{index_CPU_ID}{C\+P\+U I\+D specification} .\hypertarget{_master_8cpp_COLL_SEARCHRB}{}\subsubsection{Search the charged s\+Ring\+Buffer structs}\label{_master_8cpp_COLL_SEARCHRB}
+Searches all the structs for connections for which this thread is assigned.\hypertarget{_master_8cpp_COLL_TCPCON}{}\subsubsection{Establishes T\+C\+P/\+I\+P connections with F\+E\+Bs.}\label{_master_8cpp_COLL_TCPCON}
+Establishes T\+C\+P/\+I\+P connections with F\+E\+Bs. \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket()} takes main role.\hypertarget{_master_8cpp_COLL_STARTSYNC}{}\subsubsection{Synchronizes threads before starting D\+A\+Q.}\label{_master_8cpp_COLL_STARTSYNC}
+Waits for the other threads to be prepared as well. See \hyperlink{index_START_SYNC}{Start synchronization}.\hypertarget{_master_8cpp_COLL_READSOCK}{}\subsubsection{Reads data from socket and writes it to Ring\+Buffer.}\label{_master_8cpp_COLL_READSOCK}
+Reads data arrived at the sockets and writes on Ring Buffers (in the structs). Reading from sockets is performed by \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket()} and writing to Ring Buffers is performed by \hyperlink{class_l_s_t_d_a_q_1_1_ring_buffer_a6e5dd48d737d2a7cdc8e53baa97900eb}{L\+S\+T\+D\+A\+Q\+::\+Ring\+Buffer\+::write()}.\hypertarget{_master_8cpp_COLL_OUTLOOP}{}\subsubsection{Goes out the loop.}\label{_master_8cpp_COLL_OUTLOOP}
+Goes out the loop when read amount of all the connections exceeded the requested amount.\hypertarget{_master_8cpp_COLL_THREADEND}{}\subsubsection{Thread ends.}\label{_master_8cpp_COLL_THREADEND}
+\hypertarget{_master_8cpp_a5cb25131ecbe5f55819aa31d331c833a}{}\index{Master.\+cpp@{Master.\+cpp}!get\+Max\+Cid@{get\+Max\+Cid}}
+\index{get\+Max\+Cid@{get\+Max\+Cid}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{get\+Max\+Cid()}]{\setlength{\rightskip}{0pt plus 5cm}int get\+Max\+Cid (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a5cb25131ecbe5f55819aa31d331c833a}
+\hypertarget{_master_8cpp_a0173e926c090810e7a7f5cd30356192c}{}\index{Master.\+cpp@{Master.\+cpp}!inverse\+Byte\+Order@{inverse\+Byte\+Order}}
+\index{inverse\+Byte\+Order@{inverse\+Byte\+Order}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{inverse\+Byte\+Order(char $\ast$buf, int bufsize)}]{\setlength{\rightskip}{0pt plus 5cm}void inverse\+Byte\+Order (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{buf, }
+\item[{int}]{bufsize}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a0173e926c090810e7a7f5cd30356192c}
+
+
+Flips the byte order of given array. 
+
+The order of each value inside data sent from Dragon is inversed.~\newline
+ For event building, trig\+No and evt\+No are needed.~\newline
+ This function is used to flip byte orders of them after extraction of data from socket.~\newline
+ \hypertarget{_master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{}\index{Master.\+cpp@{Master.\+cpp}!main@{main}}
+\index{main@{main}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{main(int argc, char $\ast$$\ast$argv)}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$$\ast$}]{argv}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}
+
+
+main 
+
+
+\begin{DoxyParams}{Parameters}
+{\em infreq} & Input frequency. (i.\+e.\+the frequency of triggers which are given to F\+E\+B.)~\newline
+ specified by argv\mbox{[}1\mbox{]}.~\newline
+ This is used only for making report. \\
+\hline
+{\em Ndaq} & The number of events to acquire.~\newline
+ specified by argv\mbox{[}2\mbox{]}, otherwise D\+A\+Q\+\_\+\+N\+E\+V\+E\+N\+T is set.\\
+\hline
+{\em datacreate} & Whether data will be saved. specified by argv\mbox{[}3\mbox{]}. If yes, data is saved to disk.\\
+\hline
+\end{DoxyParams}
+\hypertarget{_master_8cpp_MAIN_PROC}{}\subsection{The procedures}\label{_master_8cpp_MAIN_PROC}
+
+\begin{DoxyEnumerate}
+\item Set parameters from args
+\item Inspect \# of C\+P\+Us
+\item Read configuration file and check its validity.
+\item Set configurations for thread and connection in s\+R\+Ing\+Buffer structs.
+\item submit Multi-\/threaded processes
+\item wait all the Multi-\/threaded processes to finish
+\end{DoxyEnumerate}\hypertarget{_master_8cpp_MAIN_SET_PARAM}{}\subsubsection{Set parameters from args}\label{_master_8cpp_MAIN_SET_PARAM}
+At submission, main function can receive 1 to 3 arguments. The arg\mbox{[}\mbox{]} are set as follows.~\newline
+ Ndaq = arg\mbox{[}1\mbox{]}~\newline
+ infreq = arg\mbox{[}2\mbox{]}~\newline
+ datacreate = arg\mbox{[}3\mbox{]}~\newline
+\hypertarget{_master_8cpp_MAIN_INS_CPU}{}\subsubsection{Inspect \# of C\+P\+Us}\label{_master_8cpp_MAIN_INS_CPU}
+Ncpu is set from sysconf(). see \hyperlink{index_CPU_ID}{C\+P\+U I\+D specification} .\hypertarget{_master_8cpp_MAIN_READCONF}{}\subsubsection{Read configuration file and check its validity.}\label{_master_8cpp_MAIN_READCONF}
+Read \char`\"{}\+Connection.\+conf\char`\"{} in which empty lines and lines start with \char`\"{}\#\char`\"{} are neglected.
+\begin{DoxyItemize}
+\item Parameters to be set~\newline
+
+\begin{DoxyItemize}
+\item Below are used to store the values read from \char`\"{}\+Connection.\+conf\char`\"{} temporally .
+\begin{DoxyItemize}
+\item sh\+Cid \+: Collector id.
+\item sz\+Addr \+: I\+P address of F\+E\+B.
+\item sh\+Port \+: Port number of F\+E\+B.
+\end{DoxyItemize}
+\item Below are set from the values above.
+\begin{DoxyItemize}
+\item max\+Cid \+: The maximum value of Collector I\+D.
+\item first\+R\+B\+: The first connection I\+D for each collector thread.
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item Restrictions~\newline
+ There is a rule below for writing configuration files. If the values above violates it, the program exits.
+\begin{DoxyItemize}
+\item Limit of \# of connections~\newline
+ If more connections than M\+A\+X\+\_\+\+C\+O\+N\+N\+E\+C\+T\+I\+O\+N are written in \char`\"{}\+Connection.\+conf\char`\"{}, program exits.
+\item No skip of Cid~\newline
+ If there is interval in Cid specification, program exits.
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{_master_8cpp_MAIN_SETSRB}{}\subsubsection{Set configurations for thread and connection in s\+R\+Ing\+Buffer structs.}\label{_master_8cpp_MAIN_SETSRB}
+
+\begin{DoxyItemize}
+\item After validation, The parameters below are set to \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} structs from the parameters above.
+\begin{DoxyItemize}
+\item s\+R\+B.\+Cid
+\item s\+R\+B.\+sz\+Addr
+\item s\+R\+B.\+sh\+Port
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{_master_8cpp_MAIN_SUBMIT}{}\subsubsection{Submit Multi-\/threaded processes}\label{_master_8cpp_MAIN_SUBMIT}
+By pthread\+\_\+create() function, threads are created. handle\mbox{[}\mbox{]} is an array of pthread\+\_\+t type variable, which is used to handle threads. By their numbers the array, threads are numbered as these.~\newline
+ \begin{TabularC}{3}
+\hline
+\rowcolor{lightgray}{\bf Thread name }&{\bf Number of threads }&{\bf handle\mbox{[}\mbox{]}  }\\\cline{1-3}
+Collector\+\_\+thread &n\+Coll &0 -\/ n\+Coll-\/1 \\\cline{1-3}
+Builder\+\_\+thread &1 &n\+Coll \\\cline{1-3}
+Thru\+Put\+Mes\+\_\+thread&1 &n\+Coll+1 \\\cline{1-3}
+\end{TabularC}
+Note\+:~\newline
+Which \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} a collector thread take charge of is defined by creating the tread giving the first \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} struct to be treated by it.\hypertarget{_master_8cpp_MAIN_JOIN}{}\subsubsection{wait all the Multi-\/threaded processes to finish}\label{_master_8cpp_MAIN_JOIN}
+pthread\+\_\+join() function waits for a thread to end. When all the threads finished, this function ends. \hypertarget{_master_8cpp_a2bc96e14aff905cfba14c80aa9fc6bc1}{}\index{Master.\+cpp@{Master.\+cpp}!s\+R\+Bcreate@{s\+R\+Bcreate}}
+\index{s\+R\+Bcreate@{s\+R\+Bcreate}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{s\+R\+Bcreate(int n\+Serv)}]{\setlength{\rightskip}{0pt plus 5cm}void s\+R\+Bcreate (
+\begin{DoxyParamCaption}
+\item[{int}]{n\+Serv}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a2bc96e14aff905cfba14c80aa9fc6bc1}
+\hypertarget{_master_8cpp_a6d162cd44c490ccae81ac5d22f7db74a}{}\index{Master.\+cpp@{Master.\+cpp}!s\+R\+Bdelete@{s\+R\+Bdelete}}
+\index{s\+R\+Bdelete@{s\+R\+Bdelete}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{s\+R\+Bdelete(int n\+Serv)}]{\setlength{\rightskip}{0pt plus 5cm}void s\+R\+Bdelete (
+\begin{DoxyParamCaption}
+\item[{int}]{n\+Serv}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a6d162cd44c490ccae81ac5d22f7db74a}
+\hypertarget{_master_8cpp_afdfe90600cb22da97e4a38a3a7245c0d}{}\index{Master.\+cpp@{Master.\+cpp}!s\+R\+Binit@{s\+R\+Binit}}
+\index{s\+R\+Binit@{s\+R\+Binit}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{s\+R\+Binit()}]{\setlength{\rightskip}{0pt plus 5cm}void s\+R\+Binit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_afdfe90600cb22da97e4a38a3a7245c0d}
+\hypertarget{_master_8cpp_add67bfd9f7cbc6a394d0d61a41e57ec5}{}\index{Master.\+cpp@{Master.\+cpp}!s\+R\+Bsetaddr@{s\+R\+Bsetaddr}}
+\index{s\+R\+Bsetaddr@{s\+R\+Bsetaddr}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{s\+R\+Bsetaddr(int s\+R\+Bid, unsigned short sh\+Cid, char $\ast$sz\+Addr, unsigned short sh\+Port)}]{\setlength{\rightskip}{0pt plus 5cm}void s\+R\+Bsetaddr (
+\begin{DoxyParamCaption}
+\item[{int}]{s\+R\+Bid, }
+\item[{unsigned short}]{sh\+Cid, }
+\item[{char $\ast$}]{sz\+Addr, }
+\item[{unsigned short}]{sh\+Port}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_add67bfd9f7cbc6a394d0d61a41e57ec5}
+\hypertarget{_master_8cpp_a9138383c988375a04ce17786819665e5}{}\index{Master.\+cpp@{Master.\+cpp}!Thru\+Put\+Mes\+\_\+thread@{Thru\+Put\+Mes\+\_\+thread}}
+\index{Thru\+Put\+Mes\+\_\+thread@{Thru\+Put\+Mes\+\_\+thread}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{Thru\+Put\+Mes\+\_\+thread(void $\ast$arg)}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ Thru\+Put\+Mes\+\_\+thread (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{arg}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_a9138383c988375a04ce17786819665e5}
+
+
+Thru\+Put\+Mes thread. 
+
+\hypertarget{_master_8cpp_aa7b0d9ec5f71e9be9d0520a7f862a486}{}\index{Master.\+cpp@{Master.\+cpp}!usage@{usage}}
+\index{usage@{usage}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{usage(char $\ast$argv)}]{\setlength{\rightskip}{0pt plus 5cm}void usage (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{argv}
+\end{DoxyParamCaption}
+)}\label{_master_8cpp_aa7b0d9ec5f71e9be9d0520a7f862a486}
+
+
+\subsection{Variable Documentation}
+\hypertarget{_master_8cpp_ae415d43f6dfaf58e6bca992b143ac004}{}\index{Master.\+cpp@{Master.\+cpp}!cond\+\_\+allend@{cond\+\_\+allend}}
+\index{cond\+\_\+allend@{cond\+\_\+allend}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{cond\+\_\+allend}]{\setlength{\rightskip}{0pt plus 5cm}pthread\+\_\+cond\+\_\+t cond\+\_\+allend =P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+E\+R}\label{_master_8cpp_ae415d43f6dfaf58e6bca992b143ac004}
+\hypertarget{_master_8cpp_a6e4fa43841449af20dd3798e7de87d2f}{}\index{Master.\+cpp@{Master.\+cpp}!datacreate@{datacreate}}
+\index{datacreate@{datacreate}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{datacreate}]{\setlength{\rightskip}{0pt plus 5cm}bool datacreate}\label{_master_8cpp_a6e4fa43841449af20dd3798e7de87d2f}
+\hypertarget{_master_8cpp_a44ff404ab6caa6e80830e799d22120a0}{}\index{Master.\+cpp@{Master.\+cpp}!infreq@{infreq}}
+\index{infreq@{infreq}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{infreq}]{\setlength{\rightskip}{0pt plus 5cm}int infreq}\label{_master_8cpp_a44ff404ab6caa6e80830e799d22120a0}
+\hypertarget{_master_8cpp_a4ae5c06802ed8788fbd5a7d55d9c5b85}{}\index{Master.\+cpp@{Master.\+cpp}!init\+End@{init\+End}}
+\index{init\+End@{init\+End}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{init\+End}]{\setlength{\rightskip}{0pt plus 5cm}int init\+End}\label{_master_8cpp_a4ae5c06802ed8788fbd5a7d55d9c5b85}
+\hypertarget{_master_8cpp_a898fdbfa9c296c6a8e343c764f11acba}{}\index{Master.\+cpp@{Master.\+cpp}!mutex\+\_\+init\+Lock@{mutex\+\_\+init\+Lock}}
+\index{mutex\+\_\+init\+Lock@{mutex\+\_\+init\+Lock}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{mutex\+\_\+init\+Lock}]{\setlength{\rightskip}{0pt plus 5cm}pthread\+\_\+mutex\+\_\+t mutex\+\_\+init\+Lock =P\+T\+H\+R\+E\+A\+D\+\_\+\+M\+U\+T\+E\+X\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+E\+R}\label{_master_8cpp_a898fdbfa9c296c6a8e343c764f11acba}
+\hypertarget{_master_8cpp_a601520f53e2d3d67744513d176ccf90a}{}\index{Master.\+cpp@{Master.\+cpp}!Ncpu@{Ncpu}}
+\index{Ncpu@{Ncpu}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{Ncpu}]{\setlength{\rightskip}{0pt plus 5cm}int Ncpu}\label{_master_8cpp_a601520f53e2d3d67744513d176ccf90a}
+\hypertarget{_master_8cpp_a80ca370ae9c3da6cf6d5e75206dfb76d}{}\index{Master.\+cpp@{Master.\+cpp}!Ndaq@{Ndaq}}
+\index{Ndaq@{Ndaq}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{Ndaq}]{\setlength{\rightskip}{0pt plus 5cm}unsigned long Ndaq}\label{_master_8cpp_a80ca370ae9c3da6cf6d5e75206dfb76d}
+\hypertarget{_master_8cpp_aa65708d975d0c62e4d1edb504fa5ba2b}{}\index{Master.\+cpp@{Master.\+cpp}!s\+R\+B@{s\+R\+B}}
+\index{s\+R\+B@{s\+R\+B}!Master.\+cpp@{Master.\+cpp}}
+\subsubsection[{s\+R\+B}]{\setlength{\rightskip}{0pt plus 5cm}{\bf s\+Ring\+Buffer} s\+R\+B\mbox{[}{\bf M\+A\+X\+\_\+\+R\+I\+N\+G\+B\+U\+F}\mbox{]}}\label{_master_8cpp_aa65708d975d0c62e4d1edb504fa5ba2b}

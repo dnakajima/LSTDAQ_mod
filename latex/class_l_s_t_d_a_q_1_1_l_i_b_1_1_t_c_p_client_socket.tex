@@ -1,0 +1,158 @@
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{}\section{L\+S\+T\+D\+A\+Q\+:\+:L\+I\+B\+:\+:T\+C\+P\+Client\+Socket Class Reference}
+\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+
+
+The class to take care of T\+C\+P/\+I\+P connection.  
+
+
+
+
+{\ttfamily \#include $<$T\+C\+P\+Client\+Socket.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7175ecb244181ab5d99cbb399e7ab088}{T\+C\+P\+Client\+Socket} ()  throw ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a1b0d5399d0ef18b30977ebb7475c4b11}{T\+C\+P\+Client\+Socket} (const \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{T\+C\+P\+Client\+Socket} \&)  throw ()
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+virtual \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a96bec52de4a6e69c491b6cf089e195ac}{$\sim$\+T\+C\+P\+Client\+Socket} ()  throw ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+\hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{T\+C\+P\+Client\+Socket} \& \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a8bd417c4938eac0a20293fada51ab361}{operator=} (const \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket}{T\+C\+P\+Client\+Socket} \&)  throw ()
+\begin{DoxyCompactList}\small\item\em \char`\"{}=\char`\"{} Operator. \end{DoxyCompactList}\item 
+int \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7356e597b5384977aca499000858e62e}{get\+Sock} ()  throw ()
+\begin{DoxyCompactList}\small\item\em Getter. \end{DoxyCompactList}\item 
+bool \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_aa1cabc1a3e1524013202e70b5b617bb6}{connect\+Tcp} (const char $\ast$psz\+Host, unsigned short sh\+Port, unsigned long \&l\+Connected\+I\+P)
+\begin{DoxyCompactList}\small\item\em Establishes T\+C\+P/\+I\+P connection. \end{DoxyCompactList}\item 
+ssize\+\_\+t \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_ae05c42b25f2487e3c38db662ca6ba675}{read\+Sock} (void $\ast$buffer, size\+\_\+t nbytes)  throw ()
+\begin{DoxyCompactList}\small\item\em Reads data from socket. \end{DoxyCompactList}\item 
+bool \hyperlink{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a5c7ecc3beed091b5a962978a2d616078}{close\+Sock} ()
+\begin{DoxyCompactList}\small\item\em Close socket. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The class to take care of T\+C\+P/\+I\+P connection. 
+
+This class requires the knowledge of socket programming to maintain. It obtains all the information for T\+C\+P/\+I\+P connection as member variables and establishes/disconnects the T\+C\+P/\+I\+P connection by member functions.
+
+
+\begin{DoxyParams}{Parameters}
+{\em m\+\_\+sock\+Tcp} & \+: int type which stores socket I\+D \\
+\hline
+{\em m\+\_\+addr\+Tcp} & \+: sockaddr\+\_\+in type struct which stores connection information destination \\
+\hline
+{\em m\+\_\+sock\+No} & \+: U\+S\+E\+L\+E\+S\+S V\+A\+L\+U\+E. I H\+A\+V\+E F\+O\+R\+G\+O\+T T\+O R\+E\+M\+O\+V\+E I\+T. W\+I\+L\+L B\+E R\+E\+M\+O\+V\+E\+D. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7175ecb244181ab5d99cbb399e7ab088}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!T\+C\+P\+Client\+Socket@{T\+C\+P\+Client\+Socket}}
+\index{T\+C\+P\+Client\+Socket@{T\+C\+P\+Client\+Socket}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{T\+C\+P\+Client\+Socket()}]{\setlength{\rightskip}{0pt plus 5cm}L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::\+T\+C\+P\+Client\+Socket (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) throw  ) }\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7175ecb244181ab5d99cbb399e7ab088}
+
+
+Constructor. 
+
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a1b0d5399d0ef18b30977ebb7475c4b11}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!T\+C\+P\+Client\+Socket@{T\+C\+P\+Client\+Socket}}
+\index{T\+C\+P\+Client\+Socket@{T\+C\+P\+Client\+Socket}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{T\+C\+P\+Client\+Socket(const T\+C\+P\+Client\+Socket \&)}]{\setlength{\rightskip}{0pt plus 5cm}L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::\+T\+C\+P\+Client\+Socket (
+\begin{DoxyParamCaption}
+\item[{const {\bf T\+C\+P\+Client\+Socket} \&}]{tcps}
+\end{DoxyParamCaption}
+) throw  ) }\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a1b0d5399d0ef18b30977ebb7475c4b11}
+
+
+Copy constructor. 
+
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a96bec52de4a6e69c491b6cf089e195ac}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!````~T\+C\+P\+Client\+Socket@{$\sim$\+T\+C\+P\+Client\+Socket}}
+\index{````~T\+C\+P\+Client\+Socket@{$\sim$\+T\+C\+P\+Client\+Socket}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{$\sim$\+T\+C\+P\+Client\+Socket()}]{\setlength{\rightskip}{0pt plus 5cm}L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::$\sim$\+T\+C\+P\+Client\+Socket (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) throw  ) \hspace{0.3cm}{\ttfamily [virtual]}}\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a96bec52de4a6e69c491b6cf089e195ac}
+
+
+Destructor. 
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a5c7ecc3beed091b5a962978a2d616078}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!close\+Sock@{close\+Sock}}
+\index{close\+Sock@{close\+Sock}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{close\+Sock()}]{\setlength{\rightskip}{0pt plus 5cm}bool L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::close\+Sock (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a5c7ecc3beed091b5a962978a2d616078}
+
+
+Close socket. 
+
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_aa1cabc1a3e1524013202e70b5b617bb6}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!connect\+Tcp@{connect\+Tcp}}
+\index{connect\+Tcp@{connect\+Tcp}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{connect\+Tcp(const char $\ast$psz\+Host, unsigned short sh\+Port, unsigned long \&l\+Connected\+I\+P)}]{\setlength{\rightskip}{0pt plus 5cm}bool L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::connect\+Tcp (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{psz\+Host, }
+\item[{unsigned short}]{sh\+Port, }
+\item[{unsigned long \&}]{l\+Connected\+I\+P}
+\end{DoxyParamCaption}
+)}\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_aa1cabc1a3e1524013202e70b5b617bb6}
+
+
+Establishes T\+C\+P/\+I\+P connection. 
+
+Procedures\+:
+\begin{DoxyItemize}
+\item Get a socket to receive data in client side (D\+A\+Q program) by socket() function and store the socket number in m\+\_\+sock\+Tcp.
+\item Set values in m\+\_\+addr\+Tcp, including the destination address (I\+P address and port number).
+\item Establish connection with the server (F\+E\+B) by connect() function.
+\item After connection is established, data which F\+E\+B sends arrives at the socket and will be stored 
+\end{DoxyItemize}\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7356e597b5384977aca499000858e62e}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!get\+Sock@{get\+Sock}}
+\index{get\+Sock@{get\+Sock}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{get\+Sock()}]{\setlength{\rightskip}{0pt plus 5cm}int L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::get\+Sock (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) throw  ) }\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a7356e597b5384977aca499000858e62e}
+
+
+Getter. 
+
+\begin{DoxyReturn}{Returns}
+m\+\_\+sock\+Tcp( 
+\end{DoxyReturn}
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a8bd417c4938eac0a20293fada51ab361}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!operator=@{operator=}}
+\index{operator=@{operator=}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{operator=(const T\+C\+P\+Client\+Socket \&)}]{\setlength{\rightskip}{0pt plus 5cm}{\bf T\+C\+P\+Client\+Socket} \& L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf T\+C\+P\+Client\+Socket} \&}]{tcps}
+\end{DoxyParamCaption}
+) throw  ) }\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_a8bd417c4938eac0a20293fada51ab361}
+
+
+\char`\"{}=\char`\"{} Operator. 
+
+\hypertarget{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_ae05c42b25f2487e3c38db662ca6ba675}{}\index{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}!read\+Sock@{read\+Sock}}
+\index{read\+Sock@{read\+Sock}!L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket@{L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket}}
+\subsubsection[{read\+Sock(void $\ast$buffer, size\+\_\+t nbytes)}]{\setlength{\rightskip}{0pt plus 5cm}ssize\+\_\+t L\+S\+T\+D\+A\+Q\+::\+L\+I\+B\+::\+T\+C\+P\+Client\+Socket\+::read\+Sock (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{buffer, }
+\item[{size\+\_\+t}]{nbytes}
+\end{DoxyParamCaption}
+) throw  ) }\label{class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket_ae05c42b25f2487e3c38db662ca6ba675}
+
+
+Reads data from socket. 
+
+read() function reads data from receiver socket. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_t_c_p_client_socket_8hpp}{T\+C\+P\+Client\+Socket.\+hpp}\item 
+\hyperlink{_t_c_p_client_socket_8cpp}{T\+C\+P\+Client\+Socket.\+cpp}\end{DoxyCompactItemize}
