@@ -1,23 +1,23 @@
 \begin{DoxyAuthor}{Author}
-Kazuma Ishio, Univ. of Tokyo 
+Kazuma Ishio,Daisuke Nakajima Univ. of Tokyo 
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
-Last modified on 2015/05/11
+Last modified on 2016/05/02
 \end{DoxyDate}
 \hypertarget{index_INTRO}{}\section{Introduction}\label{index_INTRO}
-L\+S\+T\+D\+A\+Q is a program to perform data acquisition from L\+S\+T camera.~\newline
- The camera in a telescope consists of 265 modules called F\+E\+B. L\+S\+T\+D\+A\+Q acquires data from them through T\+C\+P/\+I\+P connection.~\newline
+L\+S\+T\+D\+AQ is a program to perform data acquisition from L\+ST camera.~\newline
+ The camera in a telescope consists of 265 modules called F\+EB. L\+S\+T\+D\+AQ acquires data from them through T\+C\+P/\+IP connection.~\newline
  At this moment minimum features are implemented.\hypertarget{index_FUNCTIONALITY_OVERVIEW}{}\subsection{Functionality Overview}\label{index_FUNCTIONALITY_OVERVIEW}
 
 \begin{DoxyItemize}
-\item T\+C\+P/\+I\+P connection to F\+E\+Bs (configurable without compilation)
-\item Multi threaded data acquisition through T\+C\+P/\+I\+P (configurable without compilation)
+\item T\+C\+P/\+IP connection to F\+E\+Bs (configurable without compilation)
+\item Multi threaded data acquisition through T\+C\+P/\+IP (configurable without compilation)
 \item Event building identifying trigger number
 \item data pooling in ring buffers, to absorb inequality of sending data between F\+E\+Bs.
 \end{DoxyItemize}\hypertarget{index_PROC_OVERVIEW}{}\subsection{Procedure Overview}\label{index_PROC_OVERVIEW}
 
 \begin{DoxyItemize}
-\item \hyperlink{_master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()} function
+\item \hyperlink{Master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()} function
 \begin{DoxyItemize}
 \item Sets parameters from args and sysconf.
 \item Reads configuration file.
@@ -27,23 +27,23 @@ L\+S\+T\+D\+A\+Q is a program to perform data acquisition from L\+S\+T camera.~\
 \item Creates Monitor thread.
 \item Waits for the end of the threads.
 \end{DoxyItemize}
-\item \hyperlink{_master_8cpp_a568c34b708bcc89579bda6142733110a}{Collector\+\_\+thread()} function
+\item \hyperlink{Master_8cpp_a568c34b708bcc89579bda6142733110a}{Collector\+\_\+thread()} function
 \begin{DoxyItemize}
 \item Casts the input
-\item Sets C\+P\+U.
-\item Searches the charged \hyperlink{structs_ring_buffer}{s\+Ring\+Buffer} structs
-\item Establishes T\+C\+P/\+I\+P connections with F\+E\+Bs.
-\item Synchronizes threads before starting D\+A\+Q.
+\item Sets C\+PU.
+\item Searches the charged \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} structs
+\item Establishes T\+C\+P/\+IP connections with F\+E\+Bs.
+\item Synchronizes threads before starting D\+AQ.
 \item Reads data from socket~\newline
  and writes it to Ring\+Buffer.
 \item Goes out the loop.
 \item Thread ends.
 \end{DoxyItemize}
-\item \hyperlink{_master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{Builder\+\_\+thread()} function
+\item \hyperlink{Master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{Builder\+\_\+thread()} function
 \begin{DoxyItemize}
 \item Receives the first struct for connection.
 \item Searches all the structs for connections
-\item Sets C\+P\+U.
+\item Sets C\+PU.
 \item Creates output file.
 \item Waits for start synchronization.
 \item Reads data written in Ring Buffers by Collector threads, combining the data with identical trigger number embedded in the data.
@@ -52,26 +52,33 @@ L\+S\+T\+D\+A\+Q is a program to perform data acquisition from L\+S\+T camera.~\
 \end{DoxyItemize}
 \end{DoxyItemize}\hypertarget{index_PROCEDURE_CLOSEVIEW}{}\section{Common procedure closeview}\label{index_PROCEDURE_CLOSEVIEW}
 In this section, the explanation for the procedures which are commonly used are provided.\hypertarget{index_CPU_ID}{}\subsection{C\+P\+U I\+D specification}\label{index_CPU_ID}
-To adopt parallel computing, assigned are C\+P\+U I\+Ds to the threads, which are divided in a unit of procedue which can run in parallel.\hypertarget{index_CPU_ID_OVERVIEW}{}\subsubsection{Overview}\label{index_CPU_ID_OVERVIEW}
+To adopt parallel computing, assigned are C\+PU I\+Ds to the threads, which are divided in a unit of procedue which can run in parallel.\hypertarget{index_CPU_ID_OVERVIEW}{}\subsubsection{Overview}\label{index_CPU_ID_OVERVIEW}
 main function creates multi threads. The threads consist of one Thru\+Put\+Mes\+\_\+thread, one Builder\+\_\+thread and several Collector\+\_\+thread. Collector\+\_\+thread can run as multiple threads and the configuration of multiplicity is established by reading Connection.\+conf. The number of threads can be increased without limit. But the number of C\+P\+Us is limited, therefore too many threads cause assignment of the C\+P\+Us shared by multiple threads. Unless the number of threads does not exceed the number of C\+P\+Us, assignment of threads to C\+P\+Us is done avoiding biased assignment.\hypertarget{index_CPU_ID_PROC}{}\subsubsection{Procedues}\label{index_CPU_ID_PROC}
-There are {\ttfamily n\+Coll + 2} threads to be assigned, which consist of one {\ttfamily Builder\+\_\+thread}, one {\ttfamily Thru\+Put\+Mes\+\_\+thread}, and {\ttfamily n\+Coll} threads of {\ttfamily Collector\+\_\+thread}. Using residual number, C\+P\+Us are assigned to the threads evenly. Here is the relation between thread and {\ttfamily C\+P\+U\+\_\+\+I\+D}.
+There are {\ttfamily n\+Coll + 2} threads to be assigned, which consist of one {\ttfamily Builder\+\_\+thread}, one {\ttfamily Thru\+Put\+Mes\+\_\+thread}, and {\ttfamily n\+Coll} threads of {\ttfamily Collector\+\_\+thread}. Using residual number, C\+P\+Us are assigned to the threads evenly. Here is the relation between thread and {\ttfamily C\+P\+U\+\_\+\+ID}.
 
-\begin{TabularC}{3}
+\tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*3{|X[-1]}|}
 \hline
-\rowcolor{lightgray}{\bf Thread name }&{\bf Number of threads }&{\bf C\+P\+U I\+D  }\\\cline{1-3}
+\rowcolor{\tableheadbgcolor}{\bf Thread name }&{\bf Number of threads }&{\bf C\+PU ID  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}{\bf Thread name }&{\bf Number of threads }&{\bf C\+PU ID  }\\\cline{1-3}
+\endhead
 Collector\+\_\+thread &{\ttfamily n\+Coll} &{\ttfamily Cid} \% {\ttfamily Ncpu} (where {\ttfamily Cid} = 0,1,2...{\ttfamily n\+Coll}-\/1) \\\cline{1-3}
 Builder\+\_\+thread &1 &{\ttfamily n\+Coll} \% {\ttfamily Ncpu} \\\cline{1-3}
 Thru\+Put\+Mes\+\_\+thread&1 &{\ttfamily n\+Coll}+1 \% {\ttfamily Ncpu} \\\cline{1-3}
-\end{TabularC}
+\end{longtabu}
 
 
-The number of C\+P\+Us is inspected using {\ttfamily sysconf()} function in {\ttfamily \hyperlink{_master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()}} function, and stored as {\ttfamily Ncpu} value. When a thread starts, which C\+P\+U to use is set, specifying {\ttfamily C\+P\+U\+\_\+\+I\+D} in {\ttfamily \+\_\+\+\_\+\+C\+P\+U\+\_\+\+S\+E\+T()} function.\hypertarget{index_START_SYNC}{}\subsection{Start synchronization}\label{index_START_SYNC}
-When D\+A\+Q starts, all the Collector\+\_\+thread and Builder\+\_\+thread synchronize, not to waste Ring Buffer memory in a way that Collector\+\_\+thread starts filling data in Ring Buffer before Builder\+\_\+thread gets prepared to extract it.\hypertarget{index_START_SYNC_DETAILS}{}\subsubsection{Procedures}\label{index_START_SYNC_DETAILS}
+The number of C\+P\+Us is inspected using {\ttfamily sysconf()} function in {\ttfamily \hyperlink{Master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()}} function, and stored as {\ttfamily Ncpu} value. When a thread starts, which C\+PU to use is set, specifying {\ttfamily C\+P\+U\+\_\+\+ID} in {\ttfamily \+\_\+\+\_\+\+C\+P\+U\+\_\+\+S\+E\+T()} function.\hypertarget{index_START_SYNC}{}\subsection{Start synchronization}\label{index_START_SYNC}
+When D\+AQ starts, all the Collector\+\_\+thread and Builder\+\_\+thread synchronize, not to waste Ring Buffer memory in a way that Collector\+\_\+thread starts filling data in Ring Buffer before Builder\+\_\+thread gets prepared to extract it.\hypertarget{index_START_SYNC_DETAILS}{}\subsubsection{Procedures}\label{index_START_SYNC_DETAILS}
 
 \begin{DoxyItemize}
-\item When Builder\+\_\+thread gets prepared, it waits all the other threads untill they are also prepared, checking if {\ttfamily init\+End} become n\+Coll (B\+L\+D\+\_\+\+S\+T\+A\+R\+T\+\_\+\+S\+Y\+N\+C process).
+\item When Builder\+\_\+thread gets prepared, it waits all the other threads untill they are also prepared, checking if {\ttfamily init\+End} become n\+Coll (B\+L\+D\+\_\+\+S\+T\+A\+R\+T\+\_\+\+S\+Y\+NC process).
 \item On the other hand, Collector\+\_\+threads undergo the preparation process too. In a Collector\+\_\+thread, when it has established connection with all the charged F\+E\+Bs, it increases {\ttfamily init\+End} value by 1, stops itself, and waits for Builder\+\_\+thread to call it.
-\item When all Collector\+\_\+threads get prepared ({\ttfamily init\+End} = {\ttfamily n\+Coll}), Builder\+\_\+thread broadcasts the allowance of starting D\+A\+Q to all Collector\+\_\+threads.
+\item When all Collector\+\_\+threads get prepared ({\ttfamily init\+End} = {\ttfamily n\+Coll}), Builder\+\_\+thread broadcasts the allowance of starting D\+AQ to all Collector\+\_\+threads.
 \item Builder\+\_\+thread starts reading data from Ring\+Buffers immediately after the announcement, while a Collector\+\_\+thread starts reading data from socket and writing data to Ring\+Buffer after it notices the announcement.
 \end{DoxyItemize}\hypertarget{index_START_SYNC_PTHREAD}{}\subsubsection{Implementation}\label{index_START_SYNC_PTHREAD}
 This functionality is implemented using {\ttfamily mutex\+\_\+init\+Lock} as a {\ttfamily pthread\+\_\+mutex\+\_\+t} and {\ttfamily cond\+\_\+allend} as a {\ttfamily pthread\+\_\+cond\+\_\+t}.
@@ -79,9 +86,9 @@ This functionality is implemented using {\ttfamily mutex\+\_\+init\+Lock} as a {
 
 \begin{DoxyItemize}
 \item Collector\+\_\+thread~\newline
- When a Collector\+\_\+thread gets prepared for D\+A\+Q, it locks {\ttfamily mutex\+\_\+init\+Lock} ticket by {\ttfamily pthread\+\_\+mutex\+\_\+lock()} and immediately it releases it by {\ttfamily pthread\+\_\+cond\+\_\+wait()}. But this function makes it stopped until {\ttfamily pthread\+\_\+cond\+\_\+broadcast()} is issued to {\ttfamily cond\+\_\+allend}. After receiving the signal, it again tries to lock {\ttfamily mutex\+\_\+init\+Lock} which enables it to leave {\ttfamily pthread\+\_\+cond\+\_\+wait()} function. As the last step, now having the {\ttfamily mutex\+\_\+init\+Lock} ticket, it unlocks it by {\ttfamily pthread\+\_\+mutex\+\_\+unlock()} so that the other Collector\+\_\+threads can do the same step.
+ When a Collector\+\_\+thread gets prepared for D\+AQ, it locks {\ttfamily mutex\+\_\+init\+Lock} ticket by {\ttfamily pthread\+\_\+mutex\+\_\+lock()} and immediately it releases it by {\ttfamily pthread\+\_\+cond\+\_\+wait()}. But this function makes it stopped until {\ttfamily pthread\+\_\+cond\+\_\+broadcast()} is issued to {\ttfamily cond\+\_\+allend}. After receiving the signal, it again tries to lock {\ttfamily mutex\+\_\+init\+Lock} which enables it to leave {\ttfamily pthread\+\_\+cond\+\_\+wait()} function. As the last step, now having the {\ttfamily mutex\+\_\+init\+Lock} ticket, it unlocks it by {\ttfamily pthread\+\_\+mutex\+\_\+unlock()} so that the other Collector\+\_\+threads can do the same step.
 \item Builder\+\_\+thread~\newline
- When {\ttfamily init\+End} = {\ttfamily n\+Coll}, Builder\+\_\+thread announces the allowance of starting D\+A\+Q as follows. First, it locks {\ttfamily mutex\+\_\+init\+Lock} which is already free from any other threads, with pthread\+\_\+mutex\+\_\+lock() method. Second, it sends signal to all the threads which have issued {\ttfamily pthread\+\_\+cond\+\_\+wait()} function with {\ttfamily cond\+\_\+allend} variable. This procedure means that it announces the start of D\+A\+Q to all the Collector\+\_\+threads. At last, it unlocks {\ttfamily mutex\+\_\+init\+Lock} with {\ttfamily pthread\+\_\+mutex\+\_\+unlock()} function for the Collector\+\_\+threads to be able to leave {\ttfamily pthread\+\_\+cond\+\_\+wait()} function.
+ When {\ttfamily init\+End} = {\ttfamily n\+Coll}, Builder\+\_\+thread announces the allowance of starting D\+AQ as follows. First, it locks {\ttfamily mutex\+\_\+init\+Lock} which is already free from any other threads, with pthread\+\_\+mutex\+\_\+lock() method. Second, it sends signal to all the threads which have issued {\ttfamily pthread\+\_\+cond\+\_\+wait()} function with {\ttfamily cond\+\_\+allend} variable. This procedure means that it announces the start of D\+AQ to all the Collector\+\_\+threads. At last, it unlocks {\ttfamily mutex\+\_\+init\+Lock} with {\ttfamily pthread\+\_\+mutex\+\_\+unlock()} function for the Collector\+\_\+threads to be able to leave {\ttfamily pthread\+\_\+cond\+\_\+wait()} function.
 \item Thru\+Put\+Mes\+\_\+thread~\newline
  When preparation for the measurement is completed, it does the same steps as Builder\+\_\+thread. But the steps neither do nor suffer from any harm. Here is the inspection of two possible case\+:
 \begin{DoxyItemize}

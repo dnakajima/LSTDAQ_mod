@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['master_2ecpp',['Master.cpp',['../_master_8cpp.html',1,'']]]
+  ['master_2ecpp',['Master.cpp',['../Master_8cpp.html',1,'']]]
 ];

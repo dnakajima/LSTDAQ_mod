@@ -11,7 +11,7 @@
 /**
    \mainpage LSTDAQ ver3.0
    \author Kazuma Ishio,Daisuke Nakajima Univ. of Tokyo
-   \date  Last modified on 2015/05/11
+   \date  Last modified on 2016/05/02
    
    *********************************************************************
    \section INTRO Introduction
@@ -201,11 +201,28 @@
 #include <sys/timerfd.h>//timer in ThruPutMes_thread
 #include <assert.h>
 
+#include "termcolor.h"
+#include <getopt.h>
+
+struct option options[] =
+  {
+    {"help"     ,no_argument       ,NULL ,'h'},
+    {"infreq"   ,required_argument ,NULL ,'i'},
+    {"ndata"    ,required_argument ,NULL ,'n'},
+    {"output"   ,required_argument ,NULL ,'o'},
+    {"readdepth",required_argument ,NULL ,'r'},
+    {"save"     ,no_argument       ,NULL ,'s'},
+    {"version"  ,required_argument ,NULL ,'v'},
+    {"closeinspect" ,no_argument   ,NULL ,'c'},
+    {"configfile" ,required_argument   ,NULL ,'f'},
+    {0,0,0,0}
+  };
 
 
 int infreq;
 unsigned long  Ndaq;
 bool datacreate;
+std::string fileNameHeader;
 
 //variables for start synchronizer
 pthread_mutex_t mutex_initLock  =PTHREAD_MUTEX_INITIALIZER;
@@ -1276,28 +1293,93 @@ int main(int argc, char** argv)
   infreq=0;
   Ndaq=DAQ_NEVENT;
   datacreate=false;
-  if(argc >4||argc<2)
-    usage(argv[0]);
-  if(argc >= 2)
-    infreq = atoi(argv[1]);
-  if(argc >= 3)
-    Ndaq = atoi(argv[2]);
-  if(argc == 4)
-  {
-    switch (atoi(argv[3]))
-    {
-    case 1:
-      cout<<"NOTE:data will be created."<<endl;
-      datacreate = true;
-      break;
-    case 0:
-      datacreate = false;
-      break;
-    default:
-      usage(argv[0]);
-    }
-  }
+  // if(argc >4||argc<2)
+  //   usage(argv[0]);
+  // if(argc >= 2)
+  //   infreq = atoi(argv[1]);
+  // if(argc >= 3)
+  //   Ndaq = atoi(argv[2]);
+  // if(argc == 4)
+  // {
+  //   switch (atoi(argv[3]))
+  //   {
+  //   case 1:
+  //     cout<<"NOTE:data will be created."<<endl;
+  //     datacreate = true;
+  //     break;
+  //   case 0:
+  //     datacreate = false;
+  //     break;
+  //   default:
+  //     usage(argv[0]);
+  //   }
+  // }
 
+  int opt;
+  int index;
+  while((opt=getopt_long(argc,argv,"hi:n:o:r:sv:cf:",options,&index)) !=-1){
+    switch(opt)
+      {
+	TERM_COLOR_RED;
+	printf("Usage:\n");
+	printf("you run this program with some options like\n");
+	printf("%s -o MyFileNameHeader -s -r 50 -n 10000\n",argv[0]);
+	printf("***** LIST OF OPTIONS *****\n");
+	printf("-i|--infreq <Input Frequency[Hz]>    : Trigger frequency. \n");
+	printf("-o|--output <FileNameHeader>         : Header of data file .\n");
+	printf("-s|--save                            : Datasave. Default is false.\n");
+	printf("-r|--readdepth <ReadDepth>           : Default is 30.\n");
+	printf("-n|--Ndaq <#of data to acquire>      : Default is 1000.\n");
+	printf("-v|--version   <Dragon Version>      : Default is 5.\n");
+	printf("-c|--closeinspect                    : Default is false.\n");
+	printf("-f|--configfile                      : .\n");
+	printf("********* CAUTION ********\n");
+	printf("Make sure to specify readdepth to Dragon through rpcp command.\n");
+	printf("If RD=1024,limit is 3kHz at 1Gbps. so 10000events will take 10s. \n");
+	printf("If RD=30,limit is 120kHz at 1Gbps. so 1000000events will take 10s. \n");
+	printf("Close inspection mode will store\n");
+	printf("  time differences between events.\n");
+	printf("  as a file named RDXXinfreqXX_MMDD_HHMMSS.dat\n");
+	printf("  in DragonDaqMes directory which will be made automatically.\n");
+	printf("\n");
+	TERM_COLOR_RESET;
+	exit(0);
+      
+      case 'i':
+	infreq=atoi(optarg);
+	break;
+      case 'o':
+	//sprintf(fileNameHeader,"%s",optarg);
+	//if(sizeof(optarg)==0);
+	//      printf("%d\n",sizeof(optarg));
+	fileNameHeader=optarg;
+	//outputfile=optarg;
+	break;
+      
+      case 's':
+	datacreate=true;
+	break;
+      case 'n':
+	Ndaq=(unsigned int)atoi(optarg);
+	printf("Ndaq %d\n",Ndaq);
+	break;
+      
+      // case 'r':
+      // 	rddepth=atoi(optarg);
+      // 	break;
+      // case 'v':
+      // 	dragonVer=atoi(optarg);
+      // 	break;
+      // case 'c':
+      // 	closeinspect=true;
+      // 	break;
+      // case 'f' :
+      // 	configfile=optarg;
+      // 	break;
+      default:
+	printf("%s -h for usage\n",argv[0]);
+      } 
+  }
 
   cout << "***LSTDAQ starts***" <<endl;
   
@@ -1410,9 +1492,9 @@ int main(int argc, char** argv)
     for(int i=0;i<nColl+2;i++)
     pthread_join(handle[i],NULL);
   
-  cout << "LSTDAQ end" <<endl;
-  return 0;
-}
+    cout << "LSTDAQ end" <<endl;
+    return 0;
+  }
 
 
 

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['config_2ehpp',['Config.hpp',['../_config_8hpp.html',1,'']]]
+  ['config_2ehpp',['Config.hpp',['../Config_8hpp.html',1,'']]]
 ];

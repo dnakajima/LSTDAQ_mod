@@ -1,0 +1,88 @@
+\hypertarget{structsRingBuffer}{}\section{s\+Ring\+Buffer Struct Reference}
+\label{structsRingBuffer}\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structsRingBuffer_a86973832a168fb3fb15847da4407e590}{s\+R\+Bid}
+\begin{DoxyCompactList}\small\item\em Ring\+Buffer\+ID. \end{DoxyCompactList}\item 
+int \hyperlink{structsRingBuffer_ac518da2b168acdf6876786ad38465d3d}{Cid}
+\begin{DoxyCompactList}\small\item\em Collector ID. \end{DoxyCompactList}\item 
+char \hyperlink{structsRingBuffer_a3d8b0121e3a6f4c1657581c5446e67cc}{sz\+Addr} \mbox{[}18\mbox{]}
+\begin{DoxyCompactList}\small\item\em IP address of target F\+EB. \end{DoxyCompactList}\item 
+unsigned short \hyperlink{structsRingBuffer_a38ec2d7373bbb5e89f7282c3de49e564}{sh\+Port}
+\begin{DoxyCompactList}\small\item\em port number of target F\+EB. \end{DoxyCompactList}\item 
+\hyperlink{classLSTDAQ_1_1RingBuffer}{L\+S\+T\+D\+A\+Q\+::\+Ring\+Buffer} $\ast$ \hyperlink{structsRingBuffer_a02e62b51275c98f3e74e6b04d9f3ecb6}{rb}
+\item 
+\hyperlink{structsRingBuffer}{s\+Ring\+Buffer} $\ast$ \hyperlink{structsRingBuffer_a3685b679b0732b84bbccb1f467638ea9}{next}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+\begin{DoxyParams}{Parameters}
+{\em s\+R\+Bid} & Ring\+Buffer\+ID.\\
+\hline
+{\em Cid} & Collector ID. This is used to specify which collector thread controls the s\+Ring\+Buffer object. \\
+\hline
+{\em sz\+Addr} & Destination IP address of connection to F\+EB.\\
+\hline
+{\em sh\+Port} & Destination Port number of connection to F\+EB.\\
+\hline
+\end{DoxyParams}
+\hypertarget{structsRingBuffer_SRB_OVERVIEW}{}\subsection{Overview}\label{structsRingBuffer_SRB_OVERVIEW}
+This struct stores all information about an connection to F\+EB. They are created in \hyperlink{Master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()} function, based on Connection.\+conf, and used in \hyperlink{Master_8cpp_a568c34b708bcc89579bda6142733110a}{Collector\+\_\+thread()} and \hyperlink{Master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{Builder\+\_\+thread()}.
+
+\hyperlink{structsRingBuffer}{s\+Ring\+Buffer} has one-\/to-\/one correspondence to Ring\+Buffer object and connection to F\+EB. Therefore one \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct represents a connection to a F\+EB, and as many \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} structs as the connections to F\+EB are prepared. And it has one Ring\+Buffer object, which store all the data from a F\+EB temporally in a unit of event length. The purpose of this is to absorb timing inequality between connections, because the data-\/flows from F\+E\+Bs are not physically parallel.
+
+A \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct belongs to a Collector\+\_\+thread, while a Collector\+\_\+thread can take care of multiple s\+R\+Bs. The relation between them is specified in Connection.\+conf by users and set in \hyperlink{Master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()} function.
+
+A Collector\+\_\+thread performs data acquisition from F\+E\+Bs, reading data from sockets arrived by T\+CP connection and writing it on Ring\+Buffers.
+
+The data stored in Ring\+Buffer is extracted one by one by Builder\+\_\+thread.\hypertarget{structsRingBuffer_SRB_PROC}{}\subsection{Procedues}\label{structsRingBuffer_SRB_PROC}
+A \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct is used as follows.\hypertarget{structsRingBuffer_SRB_CREATION}{}\subsubsection{main() -\/-\/-\/ Object creation}\label{structsRingBuffer_SRB_CREATION}
+In \hyperlink{Master_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main()} function, s\+R\+Bs are created and the primal information to control them are set with \hyperlink{Master_8cpp_afdfe90600cb22da97e4a38a3a7245c0d}{s\+R\+Binit()}, \hyperlink{Master_8cpp_a2bc96e14aff905cfba14c80aa9fc6bc1}{s\+R\+Bcreate()} and \hyperlink{Master_8cpp_add67bfd9f7cbc6a394d0d61a41e57ec5}{s\+R\+Bsetaddr()}. When threads are created, the addresses of these s\+R\+Bs are given to the Collector\+\_\+threads and the Builder\+\_\+thread.\hypertarget{structsRingBuffer_SRB_COLL}{}\subsubsection{Collector\+\_\+thread() -\/-\/-\/ Data acquisition}\label{structsRingBuffer_SRB_COLL}
+To identify Collector\+\_\+thread, Cid is set from the \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct given to the Collector\+\_\+thread. Then the thread decides which \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} to take care of, searching for the same Cid number. T\+C\+P/\+IP connections to F\+E\+Bs for \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} structs are also established, using the connection information stored in \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct.
+
+In endless loop, data is extracted from socket and written on Ring\+Buffer object in \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} struct.\hypertarget{structsRingBuffer_SRB_BLD}{}\subsubsection{Builder\+\_\+thread() -\/-\/-\/ Event building}\label{structsRingBuffer_SRB_BLD}
+\hyperlink{Master_8cpp_a435b26afa480ba18cbef3620d0eccee2}{Builder\+\_\+thread()} performs event building in which the data from all F\+E\+Bs is combined together to make a image of whole camera. Therefore it collects addresses of all \hyperlink{structsRingBuffer}{s\+Ring\+Buffer} structs in the beginning. Then using read() function in Ring\+Buffer object, it collects data. 
+
+\subsection{Member Data Documentation}
+\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!Cid@{Cid}}
+\index{Cid@{Cid}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{Cid}{Cid}}]{\setlength{\rightskip}{0pt plus 5cm}int s\+Ring\+Buffer\+::\+Cid}\hypertarget{structsRingBuffer_ac518da2b168acdf6876786ad38465d3d}{}\label{structsRingBuffer_ac518da2b168acdf6876786ad38465d3d}
+
+
+Collector ID. 
+
+\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!next@{next}}
+\index{next@{next}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{next}{next}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf s\+Ring\+Buffer}$\ast$ s\+Ring\+Buffer\+::next}\hypertarget{structsRingBuffer_a3685b679b0732b84bbccb1f467638ea9}{}\label{structsRingBuffer_a3685b679b0732b84bbccb1f467638ea9}
+\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!rb@{rb}}
+\index{rb@{rb}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{rb}{rb}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf L\+S\+T\+D\+A\+Q\+::\+Ring\+Buffer}$\ast$ s\+Ring\+Buffer\+::rb}\hypertarget{structsRingBuffer_a02e62b51275c98f3e74e6b04d9f3ecb6}{}\label{structsRingBuffer_a02e62b51275c98f3e74e6b04d9f3ecb6}
+\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!sh\+Port@{sh\+Port}}
+\index{sh\+Port@{sh\+Port}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{sh\+Port}{shPort}}]{\setlength{\rightskip}{0pt plus 5cm}unsigned short s\+Ring\+Buffer\+::sh\+Port}\hypertarget{structsRingBuffer_a38ec2d7373bbb5e89f7282c3de49e564}{}\label{structsRingBuffer_a38ec2d7373bbb5e89f7282c3de49e564}
+
+
+port number of target F\+EB. 
+
+for example, 24. The value in Connection.\+conf will be read and set. \index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!s\+R\+Bid@{s\+R\+Bid}}
+\index{s\+R\+Bid@{s\+R\+Bid}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{s\+R\+Bid}{sRBid}}]{\setlength{\rightskip}{0pt plus 5cm}int s\+Ring\+Buffer\+::s\+R\+Bid}\hypertarget{structsRingBuffer_a86973832a168fb3fb15847da4407e590}{}\label{structsRingBuffer_a86973832a168fb3fb15847da4407e590}
+
+
+Ring\+Buffer\+ID. 
+
+\index{s\+Ring\+Buffer@{s\+Ring\+Buffer}!sz\+Addr@{sz\+Addr}}
+\index{sz\+Addr@{sz\+Addr}!s\+Ring\+Buffer@{s\+Ring\+Buffer}}
+\subsubsection[{\texorpdfstring{sz\+Addr}{szAddr}}]{\setlength{\rightskip}{0pt plus 5cm}char s\+Ring\+Buffer\+::sz\+Addr\mbox{[}18\mbox{]}}\hypertarget{structsRingBuffer_a3d8b0121e3a6f4c1657581c5446e67cc}{}\label{structsRingBuffer_a3d8b0121e3a6f4c1657581c5446e67cc}
+
+
+IP address of target F\+EB. 
+
+for example, \char`\"{}192.\+168.\+10.\+1\char`\"{}. The value in Connection.\+conf will be read and set. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{Master_8cpp}{Master.\+cpp}\end{DoxyCompactItemize}

@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['open',['open',['../class_l_s_t_d_a_q_1_1_ring_buffer.html#aa74541deb15ec24ed7cf50f22b3d8376',1,'LSTDAQ::RingBuffer']]],
-  ['operator_3d',['operator=',['../class_l_s_t_d_a_q_1_1_ring_buffer.html#a018ba5a5649552fe28a226486becf9c8',1,'LSTDAQ::RingBuffer::operator=()'],['../class_l_s_t_d_a_q_1_1_l_i_b_1_1_t_c_p_client_socket.html#a8bd417c4938eac0a20293fada51ab361',1,'LSTDAQ::LIB::TCPClientSocket::operator=()']]]
+  ['ncpu',['Ncpu',['../Master_8cpp.html#a601520f53e2d3d67744513d176ccf90a',1,'Master.cpp']]],
+  ['ndaq',['Ndaq',['../Master_8cpp.html#a80ca370ae9c3da6cf6d5e75206dfb76d',1,'Master.cpp']]],
+  ['next',['next',['../structsRingBuffer.html#a3685b679b0732b84bbccb1f467638ea9',1,'sRingBuffer']]]
 ];

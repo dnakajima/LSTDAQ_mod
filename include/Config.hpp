@@ -10,18 +10,88 @@
 #define _Config_hpp
 
 /*--- Size and structure of event data ---*/
-#define READDEPTH 30
-#define EVENTSIZE (READDEPTH*2 + 3)*16
+/** @def READDEPTH
+ * @brief Region of interest
+ */
+#define READDEPTH 40
+
+
+/** @def EVENTSIZE
+ * @brief Size of one event from one module.
+
+ * (READDEPTH * 2(high/lowgain) + 2 lines of header +flag +stopcell) * 16 byte
+ */
+#define EVENTSIZE (READDEPTH*2 + 2 +1 +1)*16
+
+
 /*FakeFEB sends data begins with header 2 bytes and followed by ipaddress 4 bytes */
 #define HEADERLEN 2   //for FakeFEB only
 #define IPADDRLEN 4   //for FakeFEB only
 /*Data from Both has evNo,trigNo, and clk(FakeFEB doesn't) in last 16 bytes*/
+
+
+/** @def AAAALEN
+ * @brief Length of the Header AAAA 2 byte
+ */
+#define AAAALEN  2
+
+/** @def PPSLEN
+ * @brief Length of the PPS counter 2 byte
+ */
+#define PPSLEN  2
+
+/** @def TENMLEN
+ * @brief Length of the 10 MHz counter 4 byte
+ */
+#define TENMLEN  4
+
+
+/** @def EVTNOLEN
+ * @brief Length of the EventCounter 4 byte
+ */
 #define EVTNOLEN  4
+
+
+/** @def TRGNOLEN
+ * @brief Length of the TriggerCounter 4 byte
+ */
 #define TRGNOLEN  4
+
+
+/** @def CLKLEN
+ * @brief Length of the local 133MHz counter 8 byte
+ */
 #define CLKLEN    8
-#define POSEVTNO  0//(READDEPTH*2 + 1)*16
-#define POSTRGNO  EVTNOLEN//(READDEPTH*2 + 1)*16 + EVTNOLEN
-#define POSCLK    EVTNOLEN + TRGNOLEN//(READDEPTH*2 + 1)*16 + EVTNOLEN + TRGNOLEN
+
+/** @def DDDDLEN
+ * @brief Length of the Footer of the header DDDD_DDDD_DDDD_DDDD 8 byte
+ */
+#define DDDDLEN  8
+
+
+
+/** @def POSEVTNO
+ * @brief Position of EventCounter 
+
+  AAAALEN+PPSLEN+TENMLEN = (2+2+4) = 8
+ */
+#define POSEVTNO  AAAALEN+PPSLEN+TENMLEN
+
+
+
+/** @def POSTRGNO
+ * @brief Position of TriggerCounter 
+
+POSEVTNO + EVTNOLEN  = (8 + 4) = 12
+ */
+#define POSTRGNO  POSEVTNO+EVTNOLEN
+
+/** @def POSTRGNO
+ * @brief Position of TriggerCounter 
+
+POSTRGNO+TRGNOLEN = (12+4) = 16
+ */
+#define POSCLK    POSTRGNO+TRGNOLEN
 
 
 #define MAX_CONNECTION 48
