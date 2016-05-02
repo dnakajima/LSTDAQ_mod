@@ -10,7 +10,7 @@
 
 /**
    \mainpage LSTDAQ ver3.0
-   \author Kazuma Ishio, Univ. of Tokyo
+   \author Kazuma Ishio,Daisuke Nakajima Univ. of Tokyo
    \date  Last modified on 2015/05/11
    
    *********************************************************************
