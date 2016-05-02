@@ -5,3 +5,5 @@
 *.so
 *.dat
 *.bak
+html/
+latex/
