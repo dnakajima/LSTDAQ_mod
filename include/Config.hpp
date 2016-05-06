@@ -13,7 +13,7 @@
 /** @def READDEPTH
  * @brief Region of interest
  */
-#define READDEPTH 40
+#define READDEPTH 100
 
 
 /** @def EVENTSIZE
@@ -93,8 +93,14 @@ POSTRGNO+TRGNOLEN = (12+4) = 16
  */
 #define POSCLK    POSTRGNO+TRGNOLEN
 
-
+/** @def MAX_CONNECTION
+ * @brief max number of connections
+ */
 #define MAX_CONNECTION 48
+
+/** @def MAX_RINGBUF
+ * @brief max number of ring buffer
+ */
 #define MAX_RINGBUF 49
 
 //error exit threshold 
@@ -110,4 +116,7 @@ POSTRGNO+TRGNOLEN = (12+4) = 16
 //outputfile by DAQtimer
 #define MESFILE "LSTDAQmeasure.dat"
 #define ERRMESFILE "LSTDAQerrmeasure.dat"
+
+#define LOGPATH "./log"
+
 #endif

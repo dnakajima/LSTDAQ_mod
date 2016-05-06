@@ -10,7 +10,7 @@
 
 /**
    \mainpage LSTDAQ ver3.0
-   \author Kazuma Ishio,Daisuke Nakajima Univ. of Tokyo
+   \author Kazuma Ishio, Daisuke Nakajima Univ. of Tokyo
    \date  Last modified on 2016/05/02
    
    *********************************************************************
@@ -203,6 +203,7 @@
 
 #include "termcolor.h"
 #include <getopt.h>
+#include "Lib.hpp"
 
 struct option options[] =
   {
@@ -215,56 +216,31 @@ struct option options[] =
     {"version"  ,required_argument ,NULL ,'v'},
     {"closeinspect" ,no_argument   ,NULL ,'c'},
     {"configfile" ,required_argument   ,NULL ,'f'},
+    {"logringbuffer" ,no_argument   ,NULL ,'l'},
     {0,0,0,0}
   };
 
-
+//!  given trigger frequency, if known a priori 
 int infreq;
+//!  number of data to be taken
 unsigned long  Ndaq;
+//! to save data or not (dafault = no)
 bool datacreate;
+//! prefix of the data name
 std::string fileNameHeader;
+//! to save log file or not
+bool logcreate;
 
 //variables for start synchronizer
 pthread_mutex_t mutex_initLock  =PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond_allend      =PTHREAD_COND_INITIALIZER;
+
 int initEnd;
-//variable of the number of CPU in the system on which this runs
+//! variable of the number of CPU in the system on which this runs
 int Ncpu;
 
 using namespace std;
 
-
-/****************************/
-// inverse Byte Order
-/****************************/
-//! \brief Flips the byte order of given array
-/*!
- *  
- * The order of each value inside data sent from Dragon is inversed.<br>
- * For event building, trigNo and evtNo are needed.<br>
- * This function is used to flip byte orders of them after extraction of data from socket.<br>
- */
-void inverseByteOrder(char *buf,int bufsize)
-{
-  // if(bufsize>32)exit 1;
-  unsigned char tempbuf[32];
-  for(int i=0; i<bufsize; i++)
-  {
-    tempbuf[i]=buf[bufsize-i-1];
-  }
-  memcpy(buf,tempbuf,bufsize);
-}
-
-/****************************/
-// print usage
-/****************************/
-void usage(char *argv)
-{
-  printf("usage: %s <infreq[Hz]> <Ndaq[events]> <datacreate> \n",argv);
-  printf("<Ndaq>       -- optional.default value is %d\n",DAQ_NEVENT);
-  printf("<datacreate> -- 1:create data. 0 or no specification: don't create data.\n"); 
-  exit(0);
-}
 
 /****************************/
 // struct definition
@@ -311,8 +287,6 @@ In endless loop, data is extracted from socket and written on RingBuffer object 
 \subsection SRB_BLD Builder_thread() --- Event building
 Builder_thread() performs event building in which the data from all FEBs is combined together to make a image of whole camera. Therefore it collects addresses of all sRingBuffer structs in the beginning. Then using read() function in RingBuffer object, it collects data.
 
-
-
  */
 struct sRingBuffer{
   int sRBid;            //!< RingBufferID
@@ -331,6 +305,10 @@ sRingBuffer sRB[MAX_RINGBUF];
 //void sRBinit();
 //void sRBcreate(int nServ);
 //void sRBsetaddr(int sRBid, char *szAddr, unsigned short shPort);
+/*! 
+ * \fn void sRBinit()
+ * \brief initialize RingBuffers
+ */
 void sRBinit()
 {
   for(int i=0; i<MAX_RINGBUF; i++)
@@ -341,7 +319,11 @@ void sRBinit()
     // cout <<sRB[i].next<<endl;
   }
 }
-
+/*! 
+ * \fn void sRBcreate(int nServ)
+ * \brief create RingBuffers
+ * \param nServ number of Dragons
+ */
 void sRBcreate(int nServ)
 {
   for(int i=0; i<nServ; i++)
@@ -353,6 +335,14 @@ void sRBcreate(int nServ)
   }
 }
 
+/*! 
+ * \fn void sRBsetaddr(int sRBid, unsigned short shCid, char *szAddr, unsigned short shPort)
+ * \brief set RingBuffers address
+ * \param nRBid ring buffer id
+ * \param shCid Collector id
+ * \param szAddr IP address of the Dragon
+ * \param shPort Port number of the Dragon
+ */
 void sRBsetaddr(int sRBid, unsigned short shCid, char *szAddr, unsigned short shPort)
 {
   if(sRB[sRBid].sRBid==sRBid)
@@ -363,6 +353,10 @@ void sRBsetaddr(int sRBid, unsigned short shCid, char *szAddr, unsigned short sh
   }
 }
 
+/*!
+ * \fn int getMaxCid()
+ * \brief return max collector id
+*/
 int getMaxCid()
 {
   int maxCid=0;
@@ -385,6 +379,17 @@ void sRBdelete(int nServ)
 /********************************/
 //! ThruPutMes thread
 /********************************/
+/**
+   \func void *ThruPutMes_thread(void *arg)
+   Measure thrughput
+   *************************
+   \section THRU_OPROC Procedures
+   *************************
+   -# create file 
+   -# initialize timer
+ */
+
+
 void *ThruPutMes_thread(void *arg)
 {
   //basic preparation
@@ -427,38 +432,39 @@ void *ThruPutMes_thread(void *arg)
 #endif
   
   //*********** Output File Creation *************//
- char buf[128];
-// sprintf(buf,"ThruPutMes_infreq%d_%dto%02d.dat"
-//         ,infreq
-//         ,nColl
-//         ,nRB);
-// FILE *fp_ms;
-// fp_ms = fopen(buf,"w");
-// fprintf(fp_ms,"InFreq=%d\n",infreq);
-// fprintf(fp_ms,"readrate by Coll[Mbps], readrate by Bld[Mbps]\n");
-  sprintf(buf,"RingBufMes_infreq%d_%dto%02d.dat"
-          ,infreq
-          ,nColl
-          ,nRB);
+
+  //! \param fp_ms ring buffer log file discripter 
   FILE *fp_ms;
+  char buf[128];
+  // sprintf(buf,"ThruPutMes_infreq%d_%dto%02d.dat"
+  //         ,infreq
+  //         ,nColl
+  //         ,nRB);
+  // FILE *fp_ms;
+  // fp_ms = fopen(buf,"w");
+  // fprintf(fp_ms,"InFreq=%d\n",infreq);
+  // fprintf(fp_ms,"readrate by Coll[Mbps], readrate by Bld[Mbps]\n");
+  sprintf(buf,"%s/RingBufMes_infreq%d_%dto%02d.dat"
+	  ,LOGPATH ,infreq ,nColl ,nRB);
+
   fp_ms = fopen(buf,"w");
   fprintf(fp_ms,"InFreq=%d\n",infreq);
   fprintf(fp_ms,"Nw in RingBuffer　　　　　　Nr in RingBuffer\n");
   
- fprintf(fp_ms, "count");
- for(int i =0;i<nRB;i++)
- {
-   fprintf(fp_ms, "   RB%02d   ",i);
- }
+  fprintf(fp_ms, "count");
   for(int i =0;i<nRB;i++)
-  {
-    fprintf(fp_ms, "   RB%02d   ",i);
-  }
- // for(int i =0;i<nRB;i++)
- // {
- //   fprintf(fp_ms, "  RB%02d_B[Mbps]  ",i);
- // }
- fprintf(fp_ms,"\n");
+    {
+      fprintf(fp_ms, "   RB%02d   ",i);
+    }
+  for(int i =0;i<nRB;i++)
+    {
+      fprintf(fp_ms, "   RB%02d   ",i);
+    }
+  // for(int i =0;i<nRB;i++)
+  // {
+  //   fprintf(fp_ms, "  RB%02d_B[Mbps]  ",i);
+  // }
+  fprintf(fp_ms,"\n");
 
   //*********** Timer Initialization *************//
   int interval;
@@ -496,8 +502,8 @@ void *ThruPutMes_thread(void *arg)
  //  fprintf(stderr, "\n");
 
   unsigned long Nread=0;
-    int ReadEnd=0;
-    bool bReadEnd[MAX_CONNECTION]={false};
+  int ReadEnd=0;
+  bool bReadEnd[MAX_CONNECTION]={false};
   while (1)
   {
     uint64_t v;
@@ -635,9 +641,6 @@ void *ThruPutMes_thread(void *arg)
   ************************************************
   \subsection COLL_THREADEND Thread ends.
   ************************************************
-   
-   
-
  */
 
 
@@ -679,6 +682,7 @@ void *Collector_thread(void *arg)
   // cout<<"next RBs for Coll "<<Cid<<endl;
   sRingBuffer *srb_temp=srb[0]->next;
   int nServ=1;
+
   while(1)
   {
     if(srb_temp->sRBid==-1)break;
@@ -688,6 +692,7 @@ void *Collector_thread(void *arg)
       srb[nServ]=srb_temp;
       // cout<<" matched."<<endl;
       nServ++;
+
     }
     // else
     // {
@@ -706,7 +711,13 @@ void *Collector_thread(void *arg)
   /******************************************/
   // Connection Initialization
   /******************************************/
-  cout<<"*** connection initialization ***"<<endl;
+  cout<<"Collector thread : *** connection initialization of ";
+  for(int i=0;i<nServ;i++)
+    {
+      cout<<" "<<srb[i]->sRBid<<" ";
+    }
+  cout<<endl;
+
   unsigned long lConnected = 0;
   LSTDAQ::LIB::TCPClientSocket *tcps[MAX_CONNECTION];
   int sock[MAX_CONNECTION];
@@ -737,7 +748,7 @@ void *Collector_thread(void *arg)
   /******************************************/
   //  Start Synchronization
   /******************************************/
-  // cout<<"*** CollInit end ***"<<endl;
+  cout<<"*** CollInit end ***"<<endl;
   initEnd++;
   pthread_mutex_lock(&mutex_initLock);
   pthread_cond_wait(&cond_allend,&mutex_initLock);
@@ -913,15 +924,21 @@ void *Builder_thread(void *arg)
   int offset;
   srb[0]= (sRingBuffer*)arg;
   char tempbuf[EVENTSIZE*MAX_CONNECTION];
-
+  unsigned char *p;
+  unsigned char headerbuf[16];
+  p=headerbuf;
+  
+  memcpy(p,"EHDR99999999",12);
+  p+=12;
+  
   
 
-  //cout<<"*** Builder_thread initialization ***"<<endl;
+  cout<<"*** Builder_thread initialization ***"<<endl;
   int nRB =0;
   while(1)
   {
-    // cout<<"srb["<<nRB<<"] :"<<srb[nRB]->next<<endl;
     if(srb[nRB]->next==0||nRB==MAX_RINGBUF)break;
+    //    cout<<"srb["<<nRB<<"] :"<<srb[nRB]->sRBid<<endl;
     srb[nRB+1]=srb[nRB]->next;
     nRB++;
   }
@@ -965,7 +982,7 @@ void *Builder_thread(void *arg)
   while(initEnd<nColl);
   // cout<<"Bld Confirmed all"<<endl;
   cout<<"*** Builder_thread starts to read ***"<<endl;
-  cout<<Ndaq<<"events from "<<nRB<<"RBs"<<endl;
+  cout<<Ndaq <<" events from "<<nRB<<"RBs "<<endl;
   pthread_mutex_lock(&mutex_initLock);
   pthread_cond_broadcast(&cond_allend);
   pthread_mutex_unlock(&mutex_initLock);
@@ -1063,112 +1080,146 @@ void *Builder_thread(void *arg)
   
   cNtrg=0;
   int SkipRB=-1;
+  unsigned int *id;
 
-  cout<<"nRB"<<nRB<<endl;
+  cout<<" BuilderThread nRB"<<nRB<<" ev="<<EVENTSIZE<<endl;
   while(1)
   {
+    unsigned int idfake=0;
     offset=0;
-    for(int i=0;i<nRB;i++)
-    {
+    for(unsigned int i=0;i<nRB;i++)
+      {
       // cout<<"SkipRB"<<SkipRB<<endl;
       if(i==SkipRB||bReadEnd[i])
-      {
-        offset+=EVENTSIZE;
-      }
+	{
+	  offset+=EVENTSIZE;
+	}
       else
-      {
-	// cout<<i<<" "<<SkipRB<<endl;
-        while(srb[i]->rb->read(&tempbuf[offset])==-1)continue;
-	// if(!bReadStart)bReadStart=true;
-        p_Nevt[i]=(unsigned int*)&tempbuf[offset+POSEVTNO];
-        p_Ntrg[i]=(unsigned int*)&tempbuf[offset+POSTRGNO];
-        Nevt[i]=(unsigned long)*p_Nevt[i];
-        Ntrg[i]=(unsigned long)*p_Ntrg[i];
-	inverseByteOrder((char *)&Nevt[i],sizeof(unsigned long));
-	inverseByteOrder((char *)&Ntrg[i],sizeof(unsigned long));
-	// cout<<i<<" "<<Nevt[i]<<endl;
-        Nread[i]++;
-        if(Nread[i]>=Ndaq)
-        {
-	  printf("RB%d end",i);
-          bReadEnd[i]=true;
-          ReadEnd++;
-        }
-        
-        if(Ntrg[i]==cNtrg)
-        {
-          offset+=EVENTSIZE;
-        }
-        else if(Ntrg[i]<cNtrg)
-        {
-          while(1)
-          {
-            while(srb[i]->rb->read(&tempbuf[offset])==-1)continue;
-            p_Nevt[i]=(unsigned int*)&tempbuf[offset+POSEVTNO];
-            p_Ntrg[i]=(unsigned int*)&tempbuf[offset+POSTRGNO];
-            Nevt[i]=(unsigned long)*p_Nevt[i];
-            Ntrg[i]=(unsigned long)*p_Ntrg[i];
-	    inverseByteOrder((char *)&Nevt[i],sizeof(unsigned long));
-	    inverseByteOrder((char *)&Ntrg[i],sizeof(unsigned long));
-	    // cout<<i<<" "<<Nevt[i]<<endl;
-            Nread[i]++;
-            if(Nevt[i]>=Ndaq)
-            {
-	      printf("RB%d end",i);
-              bReadEnd[i]=true;
-              ReadEnd++;
-              break;
-            }
-            if(Ntrg[i]==cNtrg)
-            {
-              offset+=EVENTSIZE;
-              break;
-            }
-            else if(Ntrg[i]<cNtrg)
-            {
-              continue;
-            }
-            else //if(Ntrg[i]>cNtrg)
-            {
-	      // printf("A");
-              rNtrg=Ntrg[i];
-              SkipRB=i;
-              break;
-            }
-          }//while(1)
-        }//if(skip or end)
-        else //if(Ntrg[i]>cNtrg)
-        {
-          rNtrg=Ntrg[i];
-          SkipRB=i;
-        }
-      }//for(i<nRB)
+	{
+	  // cout<<i<<" "<<SkipRB<<endl;
+	  while(srb[i]->rb->read(&tempbuf[offset])==-1)continue;
+	  //	  memcpy(&tempbuf[offset+1],&i,sizeof(unsigned int));
+	  //	  memcpy(&tempbuf[offset+POSCLK+CLKLEN],&i,sizeof(i));
+	  //	  memcpy(&tempbuf[offset+POSCLK+CLKLEN],"ID==",4);
+	  //	  cout<<"i="<<i<<endl;
+	  //	  idfake=i+265;
+	  id=&i;
+	  memcpy(&tempbuf[offset+POSCLK+CLKLEN+4],id,2);
+	  //tempbuf[offset+POSCLK+CLKLEN+4]=i+265;
+	  // if(!bReadStart)bReadStart=true;
+	  p_Nevt[i]=(unsigned int*)&tempbuf[offset+POSEVTNO];
+	  p_Ntrg[i]=(unsigned int*)&tempbuf[offset+POSTRGNO];
+	  Nevt[i]=(unsigned int)*p_Nevt[i];
+	  Ntrg[i]=(unsigned int)*p_Ntrg[i];
+	  inverseByteOrder((char *)&Nevt[i],sizeof(unsigned int));
+	  inverseByteOrder((char *)&Ntrg[i],sizeof(unsigned int));
+	  //	  cout<<"i="<<i<<" offset="<<offset<<endl;
+	  // if(i==0)
+	  // cout<<"-- sRBid="<<srb[i]->szAddr<<" i="<<i<<" Nevt="<<Nevt[i]<<" Ntrg="<<Ntrg[i]<<
+	  //   " offset="<<offset<<endl;
+	  Nread[i]++;
+	  if(Nread[i]>=Ndaq)
+	    {
+	      TERM_COLOR_RED;printf("Builder : RB%d end : %d >= %d\n",i, Nread[i],Ndaq); TERM_COLOR_RESET;
+	      bReadEnd[i]=true;
+	      ReadEnd++;
+	    }
+	  
+	  if(Ntrg[i]==cNtrg)
+	    {
+	      offset+=EVENTSIZE;
+	    }
+	  else if(Ntrg[i]<cNtrg)
+	    {
+	      while(1)
+		{
+		  while(srb[i]->rb->read(&tempbuf[offset])==-1)continue;
+		  //		  memcpy(&tempbuf[offset+POSCLK+CLKLEN],"ID==",4);
+		  //	  cout<<"i="<<i<<endl;
+		  //		  idfake=i+265;
+		  //		  id=&idfake;
+		  id=&i;
+		  memcpy(&tempbuf[offset+POSCLK+CLKLEN+4],id,2);
+		  
+		  p_Nevt[i]=(unsigned int*)&tempbuf[offset+POSEVTNO];
+		  p_Ntrg[i]=(unsigned int*)&tempbuf[offset+POSTRGNO];
+		  Nevt[i]=(unsigned int)*p_Nevt[i];
+		  Ntrg[i]=(unsigned int)*p_Ntrg[i];
+		  inverseByteOrder((char *)&Nevt[i],sizeof(unsigned int));
+		  inverseByteOrder((char *)&Ntrg[i],sizeof(unsigned int));
+		  //	    cout<<"sRBid = "<<srb[i]->szAddr<<" "<<i<<" nevt="<<Nevt[i]<<endl;
+		  // cout<<"sRBid="<<srb[i]->szAddr<<" "<<i<<" Nevt="<<Nevt[i]<<" Ntrg="<<Ntrg[i]<<
+		  //   " offset="<<offset<<" POSEVTNO="<<POSEVTNO<<"POSTRGNO "<<POSTRGNO<<endl;
+		  Nread[i]++;
+
+		  if(Nevt[i]>=Ndaq)
+		    {
+		      //	       TERM_COLOR_RED;printf("Builder : RB%d end\n",i); TERM_COLOR_RESET;
+		      TERM_COLOR_RED;printf("Builder : RB%d end : %d >= %d\n",i, Nread[i],Ndaq); TERM_COLOR_RESET;
+		      bReadEnd[i]=true;
+		      ReadEnd++;
+		      break;
+		    }
+		  if(Ntrg[i]==cNtrg)
+		    {
+		      offset+=EVENTSIZE;
+		      break;
+		    }
+		  else if(Ntrg[i]<cNtrg)
+		    {
+		      continue;
+		    }
+		  else //if(Ntrg[i]>cNtrg)
+		    {
+		      //	      printf("A");
+		      rNtrg=Ntrg[i];
+		      SkipRB=i;
+		      break;
+		    }
+		}//while(1)
+	    }//if(skip or end)
+	  else //if(Ntrg[i]>cNtrg)
+	    {
+	      rNtrg=Ntrg[i];
+	      SkipRB=i;
+	    }
+	}//for(i<nRB)
       
       // cout<<"rNtrg"<<rNtrg<<"cNtrg"<<cNtrg<<endl;
       if(rNtrg>cNtrg)
-      {
-	// printf("B");
-        cNtrg=rNtrg;
-        break;
-      }
+	{
+	  //	  printf("--- B--- rNtrg=%d, cNtrg=%d ",rNtrg,cNtrg);
+	  cNtrg=rNtrg;
+	  break;
+	}
       // if(bReadStart && cNtrg==rNtrg && i==(nRB-1))
       if(cNtrg==rNtrg && i==(nRB-1))
-      {
-	dt->readend();
-	NreadAll++;
-        cNtrg++;
-        rNtrg++;
-	SkipRB=-1;
-	//fwrite;
-	if(datacreate==true)
-	  fwrite(&tempbuf,dataLength,1,fp_data);
-
-      }
-
+	{
+	  dt->readend();
+	  memcpy(headerbuf+12,&cNtrg,sizeof(unsigned long));
+	  //*(unsigned long *)p = cNtrg;
+	  // p+=sizeof(unsigned long);
+	  NreadAll++;
+	  cNtrg++;
+	  rNtrg++;
+	  SkipRB=-1;
+	  //fwrite;
+	  if(datacreate==true)
+	    {
+	      fwrite(headerbuf,16,1,fp_data);
+	      fwrite(&tempbuf,dataLength,1,fp_data);
+	    }
+	}
+      
     }
-    // cout<<"RE"<<ReadEnd<<endl;
+    //    cout<<"Read End"<<ReadEnd<<endl;
     // if (ReadEnd==nRB)break;
-    if (ReadEnd>0)break;
+    //    if (ReadEnd>0)
+    if(NreadAll==Ndaq)
+      {
+	cout<<"Read End"<<ReadEnd<<" NreadAll="<<NreadAll<<endl;
+	break;
+      }
   }
   
   dt->DAQend();
@@ -1289,7 +1340,14 @@ int main(int argc, char** argv)
   infreq=0;
   Ndaq=DAQ_NEVENT;
   datacreate=false;
+  logcreate=false;
   fileNameHeader="test";
+  // if(argc<2)
+  //   {
+  //     usage(argv);
+  //   }
+
+
   // if(argc >4||argc<2)
   //   usage(argv[0]);
   // if(argc >= 2)
@@ -1314,54 +1372,27 @@ int main(int argc, char** argv)
 
   int opt;
   int index;
-  while((opt=getopt_long(argc,argv,"hi:n:o:r:sv:cf:",options,&index)) !=-1){
+  while((opt=getopt_long(argc,argv,"hi:n:o:r:sv:cf:l",options,&index)) !=-1)
+    {
+      //      printf("index = %d %s %s \n",optind,options[optind].name,optarg);
     switch(opt)
       {
       case 'h':
-	TERM_COLOR_RED;
-	printf("Usage:\n");
-	printf("Execute %s with some options like\n",argv[0]);
-	printf("%s -o MyFileNameHeader -s -r 50 -n 10000\n",argv[0]);
-	printf("***** LIST OF OPTIONS *****\n");
-	printf("-i|--infreq <Input Frequency[Hz]>    : Trigger frequency. \n");
-	printf("-o|--output <FileNameHeader>         : Header of data file .\n");
-	printf("-s|--save                            : Datasave. Default is false.\n");
-	printf("-r|--readdepth <ReadDepth>           : Default is 30.\n");
-	printf("-n|--Ndaq <#of data to acquire>      : Default is 1000.\n");
-	printf("-v|--version   <Dragon Version>      : Default is 5.\n");
-	printf("-c|--closeinspect                    : Default is false.\n");
-	printf("-f|--configfile                      : .\n");
-	printf("********* CAUTION ********\n");
-	printf("Make sure to specify readdepth to Dragon through rpcp command.\n");
-	printf("If RD=1024,limit is 3kHz at 1Gbps. so 10000events will take 10s. \n");
-	printf("If RD=30,limit is 120kHz at 1Gbps. so 1000000events will take 10s. \n");
-	printf("Close inspection mode will store\n");
-	printf("  time differences between events.\n");
-	printf("  as a file named RDXXinfreqXX_MMDD_HHMMSS.dat\n");
-	printf("  in DragonDaqMes directory which will be made automatically.\n");
-	printf("\n");
-	TERM_COLOR_RESET;
-	exit(0);
-      
+	usage(argv);
+	break;
       case 'i':
 	infreq=atoi(optarg);
 	break;
       case 'o':
-	//sprintf(fileNameHeader,"%s",optarg);
-	//if(sizeof(optarg)==0);
-	//      printf("%d\n",sizeof(optarg));
 	fileNameHeader=optarg;
-	//outputfile=optarg;
 	break;
-      
       case 's':
 	datacreate=true;
 	break;
       case 'n':
 	Ndaq=(unsigned int)atoi(optarg);
 	printf("Ndaq %d\n",Ndaq);
-	break;
-      
+	break;      
       // case 'r':
       // 	rddepth=atoi(optarg);
       // 	break;
@@ -1374,18 +1405,29 @@ int main(int argc, char** argv)
       // case 'f' :
       // 	configfile=optarg;
       // 	break;
-      default:
+      case 'l':
+	printf("Log file will be stored\n");
+	logcreate=true;
+	break;
+      case '?':
+	printf("Unknown options\n");
 	printf("%s -h for usage\n",argv[0]);
+	usage(argv);
+	break;	
+      default: // for unknown options or missing arg
+	printf("%s -h for usage\n",argv[0]);
+	usage(argv);
+	break;
       } 
-  }
+    }
 
-  cout << "***LSTDAQ starts***" <<endl;
-  
   /******************************************/
   //  Inspect # of CPUs
   /******************************************/
   Ncpu = sysconf(_SC_NPROCESSORS_CONF);
-  cout<<"This machine has"<<Ncpu<<" cpus"<<endl;
+  printf("This machine has ");
+  TERM_COLOR_RED;  printf("%d",Ncpu);  TERM_COLOR_RESET;
+  printf(" cpus\n");
   /******************************************/
   //   Read Connection Configuration and
   //     prepare the assignment
@@ -1450,20 +1492,48 @@ int main(int argc, char** argv)
   sRBcreate(nServ);
   for(int i=0;i<nServ;i++)
     sRBsetaddr(i,shCid[i],szAddr[i],shPort[i]);
-  
-  cout<<"****** Configuration of RinbBuffers are set ******"<<endl;
-  cout<<nColl<<" Collectors will be created for "<<nServ<<" connections."<<endl;
-  cout<<"RBid "<<"shCid "<<"     IP address     "<<" port "<<endl;
+  printf("\n");
+  printf("****** Configuration of RinbBuffers are set ******\n");
+  TERM_COLOR_RED;  printf(" %d ",nColl);  TERM_COLOR_RESET;
+  printf("Collectors will be created for");
+  TERM_COLOR_RED;  printf(" %d ",nServ);  TERM_COLOR_RESET;
+  printf("connections\n");
+  printf("\n");
+
+  cout<<setw(48)<<setfill('=')<<""<<endl;
+  cout<<"RingBuff id | "<<"Cpu id |"<<"     IP address     |"<<" port "<<endl;
   for(int i=0;i<nServ;i++)
-    cout<<"RB"<< setw(2) << setfill(' ')<<i<<"|"<<
-    setw(6) << setfill(' ')<<sRB[i].Cid<<"|"<<
-    setw(18) << setfill(' ')<<sRB[i].szAddr<<"|"<<
-    setw(5) << setfill(' ')<<sRB[i].shPort<<endl;
-  
+    cout<<setw(7) << setfill(' ')<<i<<setw(6)<<setfill(' ')<<"|"<<
+      setw(5) << setfill(' ')<<sRB[i].Cid<<setw(4)<<setfill(' ')<<"|"<<
+      "   "<<left<<setw(13)<< setfill(' ')<<sRB[i].szAddr<<right<<setw(5)<<setfill(' ')<<"|"<<
+      setw(5) << setfill(' ')<<sRB[i].shPort<<endl;
+  cout<<setw(48)<<setfill('=')<<""<<endl;
+  printf("\n");
+
   /******************************************/
   //    submit Multi-threaded processes
   /******************************************/
   // cout << "***  Thread create  ***"<<endl;
+  int NumberOfThread=nColl;
+  if(logcreate)
+    NumberOfThread=nColl+2;
+  else
+    NumberOfThread=nColl+1;
+
+
+  TERM_COLOR_BLUE;
+  //  cout << "***LSTDAQ starts***" <<endl;
+  printf("*********************************************\n");
+  printf("*********************************************\n");
+  printf("**                LSTDAQ                   **\n");
+  printf("**                                         **\n");
+  printf("**                ready                    **\n");
+  printf("**                                         **\n");
+  printf("*********************************************\n");
+  printf("*********************************************\n");
+  TERM_COLOR_RESET;
+
+
   pthread_t handle[nColl+2];
   for(int i=0;i<nColl;i++)
   {
@@ -1477,17 +1547,19 @@ int main(int argc, char** argv)
                  NULL,
                  &Builder_thread,
                  &sRB[0]);
-  pthread_create(&handle[nColl+1],
-                 NULL,
-                 &ThruPutMes_thread,
-                 &sRB[0]);
-
+  if(logcreate)
+    {
+      pthread_create(&handle[nColl+1],
+		     NULL,
+		     &ThruPutMes_thread,
+		     &sRB[0]);
+    }
   // cout <<"Threads created. "<<
   // Ndaq << "events will be transferred each"<<endl;
     /******************************************/
     //    wait all the Multi-threaded processes to finish
     /******************************************/
-    for(int i=0;i<nColl+2;i++)
+    for(int i=0;i<NumberOfThread;i++)
     pthread_join(handle[i],NULL);
   
     cout << "LSTDAQ end" <<endl;

@@ -84,7 +84,7 @@ namespace LSTDAQ{
       memcpy(m_buffer+m_woffset, buf, wbytes);
       m_woffset +=wbytes;
       m_wbytes +=wbytes;
-      //std::cout<<"rb1";
+      //      std::cout<<"rb1";
     }
     else
     {
@@ -98,7 +98,7 @@ namespace LSTDAQ{
         m_wbytes = m_remain;
         m_Nw++;
         m_Nmw=0;
-        //std::cout<<"rb2";
+	//        std::cout<<"rb2";
       }
       else
       {
@@ -111,7 +111,8 @@ namespace LSTDAQ{
           m_Nmw=0;
           m_woffset=0;
         }
-        //std::cout<<"rb3";
+	// std::cout<<"RB write "<<m_woffset<<" wbytes="<<wbytes<<std::endl;
+        // std::cout<<"rb3";
       }
     }
     //retval= m_Nw;

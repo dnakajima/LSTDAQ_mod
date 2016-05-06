@@ -94,6 +94,7 @@ namespace LSTDAQ{
 			    unsigned long Ntrg[MAX_CONNECTION],
 			    unsigned long Nevt[MAX_CONNECTION])
   {
+    std::cout<<" DAQ Summary "<<std::endl;
     //requisition time
     unsigned long long llreq_usec = GetRealTimeInterval(&tsStart,&tsEnd);
     //daq time (from 2nd to DAQ_NEVENTth events)
