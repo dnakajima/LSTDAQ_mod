@@ -23,5 +23,3 @@ Dox:
 
 clean:
 	$(RM) $(OBJS) $(TARGET) 
-	mv $(SRCDIR)/*~ bk/
-	mv $(INCLUDEDIR)/*~ bk/
