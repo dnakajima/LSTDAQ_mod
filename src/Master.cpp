@@ -946,7 +946,8 @@ void *Builder_thread(void *arg)
   /******************************************/
   char buf[128];
   // sprintf(buf,"/media/RAID0_Intel/150224/infreq%d_nColl%d_nRB%d.dat"
-  sprintf(buf,"infreq%d_nColl%d_nRB%d.dat"
+  sprintf(buf,"%s_infreq%d_nColl%d_nRB%d.dat"
+	  ,fileNameHeader.c_str()
           ,infreq
           ,nColl
           ,nRB);
@@ -1189,17 +1190,12 @@ void *Builder_thread(void *arg)
  \func main
  \param infreq
  \brief Input frequency.
-  (i.e.the frequency of triggers which are given to FEB.)\n
-  specified by argv[1].\n
   This is used only for making report.
  \param Ndaq
  \brief The number of events to acquire.\n
- specified by argv[2], otherwise DAQ_NEVENT is set.
-
+ default 100000
  \param datacreate
  \brief Whether data will be saved.
- specified by argv[3].
- If yes, data is saved to disk.
  
 
  *********************************************************************
@@ -1293,6 +1289,7 @@ int main(int argc, char** argv)
   infreq=0;
   Ndaq=DAQ_NEVENT;
   datacreate=false;
+  fileNameHeader="test";
   // if(argc >4||argc<2)
   //   usage(argv[0]);
   // if(argc >= 2)
@@ -1320,9 +1317,10 @@ int main(int argc, char** argv)
   while((opt=getopt_long(argc,argv,"hi:n:o:r:sv:cf:",options,&index)) !=-1){
     switch(opt)
       {
+      case 'h':
 	TERM_COLOR_RED;
 	printf("Usage:\n");
-	printf("you run this program with some options like\n");
+	printf("Execute %s with some options like\n",argv[0]);
 	printf("%s -o MyFileNameHeader -s -r 50 -n 10000\n",argv[0]);
 	printf("***** LIST OF OPTIONS *****\n");
 	printf("-i|--infreq <Input Frequency[Hz]>    : Trigger frequency. \n");
